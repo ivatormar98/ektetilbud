@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chollos Nórdicos</title>
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--ink:#1d1d1b;--mute:#6b6a66;--line:#e3e1db;--hot:#c2410c;--warm:#b45309;--good:#15803d;--bad:#b91c1c;--chip:#ecebe6}
+@media (prefers-color-scheme:dark){:root{--bg:#141413;--card:#1f1f1d;--ink:#eeede9;--mute:#a19f98;--line:#33322f;--hot:#fb923c;--warm:#fbbf24;--good:#4ade80;--bad:#f87171;--chip:#2a2a27}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
+header,main{max-width:1180px;margin:0 auto;padding:0 16px}
+header{padding-top:28px}
+h1{margin:0;font-size:26px}
+.sub{color:var(--mute);margin:4px 0 16px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:18px}
+.chip{border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:999px;padding:5px 12px;font:inherit;cursor:pointer}
+.chip[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+select{font:inherit;padding:5px 8px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);margin-left:auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:6px}
+.card img{width:100%;height:150px;object-fit:contain;background:#fff;border-radius:8px}
+.name{font-weight:600;line-height:1.3}
+.row{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.price{font-size:22px;font-weight:700}
+.t{font-weight:700;font-variant-numeric:tabular-nums}
+.t.hot{color:var(--hot)}.t.warm{color:var(--warm)}.t.cold{color:var(--mute)}
+.real{color:var(--good);font-weight:700}
+.mute{color:var(--mute);font-size:13px}
+.warn{color:var(--bad);font-size:13px}
+.stores{font-size:13px;color:var(--mute)}
+.go{margin-top:auto;text-align:center;background:var(--ink);color:var(--bg);text-decoration:none;border-radius:8px;padding:8px;font-weight:600}
+svg.spark{width:100%;height:34px}
+svg.spark polyline{fill:none;stroke:var(--mute);stroke-width:1.5}
+svg.spark circle{fill:var(--good)}
+h2{margin:34px 0 6px;font-size:20px}
+table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:14px}
+td,th{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+td img{width:44px;height:44px;object-fit:contain;background:#fff;border-radius:6px}
+.tbl{overflow-x:auto}
+footer{max-width:1180px;margin:30px auto;padding:0 16px;color:var(--mute);font-size:13px}
+footer a{color:inherit}
+</style>
+</head>
+<body>
+<header>
+  <h1>Chollos Nórdicos</h1>
+  <p class="sub" id="sub"></p>
+  <div class="bar" id="bar"></div>
+</header>
+<main>
+  <div class="grid" id="grid"></div>
+  <h2>Rabatter som ikke er ekte</h2>
+  <p class="mute">Førprisen butikken oppgir er høyere enn den laveste prisen butikken selv tok de siste 30 dagene før salget startet. Ifølge prisopplysningsforskriften skal rabatten regnes fra den laveste prisen.</p>
+  <div class="tbl"><table><thead><tr><th></th><th>Produkt</th><th>Butikk</th><th>Oppgir</th><th>Reelt mot laveste pris siste 30 dager</th></tr></thead><tbody id="fakes"></tbody></table></div>
+</main>
+<footer>Annonselenker: Handler du via lenkene våre, får vi provisjon fra butikken. Det koster deg ikke noe ekstra. Ekte rabatt regnes mot medianen av laveste pris de siste 90 dagene.<br><a href="om.html">Om tjenesten</a> · <a href="personvern.html">Personvern</a></footer>
+<script>
+const D = /*DATA*/null;
+const kr = n => Math.round(n).toLocaleString("nb-NO") + " kr";
+const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+let cat = "Alle", sort = "t";
+
+document.getElementById("sub").textContent =
+  `${new Date(D.day).toLocaleDateString("nb-NO", {day: "numeric", month: "long", year: "numeric"})} · ${D.products} produkter i ${D.stores.length} butikker · ${D.deals.length} ekte tilbud · ${D.fakes.length} falske rabatter`;
+
+function spark(h) {
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("class", "spark"); svg.setAttribute("viewBox", "0 0 100 34"); svg.setAttribute("preserveAspectRatio", "none");
+  svg.setAttribute("role", "img"); svg.setAttribute("aria-label", "Laveste pris de siste dagene");
+  const lo = Math.min(...h), hi = Math.max(...h), y = v => 30 - (hi === lo ? 13 : (v - lo) / (hi - lo) * 26);
+  const pts = h.map((v, i) => `${(i / (h.length - 1) * 98 + 1).toFixed(1)},${y(v).toFixed(1)}`);
+  const line = document.createElementNS(svg.namespaceURI, "polyline"); line.setAttribute("points", pts.join(" "));
+  const dot = document.createElementNS(svg.namespaceURI, "circle"); const [cx, cy] = pts.at(-1).split(",");
+  dot.setAttribute("cx", cx); dot.setAttribute("cy", cy); dot.setAttribute("r", 2.5);
+  svg.append(line, dot); return svg;
+}
+
+function card(d) {
+  const c = el("article", "card");
+  if (d.img) { const i = el("img"); i.src = d.img; i.alt = ""; i.loading = "lazy"; c.append(i); }
+  const top = el("div", "row");
+  top.append(el("span", "mute", d.cat), el("span", "t " + (d.t >= 160 ? "hot" : d.t >= 110 ? "warm" : "cold"), d.t + "°"));
+  const pr = el("div", "row");
+  pr.append(el("span", "price", kr(d.price)), el("span", "real", `−${d.real} %`));
+  c.append(top, el("div", "name", d.name), pr, el("div", "mute", `Vanligvis ~${kr(d.ref)} · billigst hos ${d.store}`));
+  if (d.claimed != null && Math.abs(d.claimed - d.real) >= 5)
+    c.append(el("div", "warn", `Butikken oppgir −${d.claimed} %`));
+  c.append(spark(d.hist));
+  c.append(el("div", "stores", d.stores.map(([s, p]) => `${s} ${kr(p)}`).join(" · ")));
+  const a = el("a", "go", `Se hos ${d.store}`); a.href = d.url; a.target = "_blank"; a.rel = "sponsored noopener";
+  c.append(a); return c;
+}
+
+function render() {
+  const g = document.getElementById("grid"); g.replaceChildren();
+  const list = D.deals.filter(d => cat === "Alle" || d.cat === cat)
+    .sort((a, b) => sort === "price" ? a.price - b.price : b[sort] - a[sort]);
+  list.forEach(d => g.append(card(d)));
+  if (!list.length) g.append(el("p", "mute", "Ingen ekte tilbud i denne kategorien i dag."));
+}
+
+const bar = document.getElementById("bar");
+["Alle", ...new Set(D.deals.map(d => d.cat))].forEach(c => {
+  const b = el("button", "chip", c); b.setAttribute("aria-pressed", c === cat);
+  b.onclick = () => { cat = c; bar.querySelectorAll(".chip").forEach(x => x.setAttribute("aria-pressed", x === b)); render(); };
+  bar.append(b);
+});
+const s = el("select"); s.setAttribute("aria-label", "Sorter");
+[["t", "Hetest"], ["real", "Størst ekte rabatt"], ["price", "Lavest pris"]].forEach(([v, t]) => { const o = el("option", null, t); o.value = v; s.append(o); });
+s.onchange = () => { sort = s.value; render(); };
+bar.append(s);
+render();
+
+const fb = document.getElementById("fakes");
+D.fakes.forEach(f => {
+  const tr = el("tr"), ti = el("td");
+  if (f.img) { const i = el("img"); i.src = f.img; i.alt = ""; i.loading = "lazy"; ti.append(i); }
+  const real = f.real > 0 ? `−${f.real} %` : f.real === 0 ? "0 %" : `+${-f.real} % (dyrere)`;
+  tr.append(ti, el("td", null, f.name), el("td", null, f.store), el("td", null, `−${f.claimed} % (før ${kr(f.old)})`),
+            el("td", "warn", `${real} – laveste pris var ${kr(f.low)}`));
+  fb.append(tr);
+});
+if (!D.fakes.length) { const tr = el("tr"), td = el("td", "mute", "Ingen i dag."); td.colSpan = 5; tr.append(td); fb.append(tr); }
+</script>
+</body>
+</html>

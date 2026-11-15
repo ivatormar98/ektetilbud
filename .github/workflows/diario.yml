@@ -1,0 +1,48 @@
+# Every morning: download the feeds, update the price history, rebuild the page and publish it on GitHub Pages.
+# Setup: Settings -> Pages -> Source: "GitHub Actions"; Settings -> Secrets -> Actions: one secret per feed URL (FEED_KOMPLETT ...).
+name: Oppdater tilbud
+on:
+  schedule:
+    - cron: "0 5 * * *"   # 06:00 Oslo in winter, 07:00 in summer
+  workflow_dispatch:       # "Run workflow" button for a manual run
+
+permissions:
+  contents: write   # to save precios.db back to the repo
+  pages: write
+  id-token: write
+
+concurrency:
+  group: oppdater
+  cancel-in-progress: false
+
+jobs:
+  oppdater:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python test_pipeline.py
+      - name: Last ned kataloger
+        run: python descargar_feeds.py
+        env:   # add one line per store in fuentes.json
+          FEED_KOMPLETT: ${{ secrets.FEED_KOMPLETT }}
+      - run: python pipeline.py
+      # shortcut: the price history lives in the repo as one SQLite file; move it to a database or release asset once it passes ~50 MB.
+      - name: Lagre prishistorikk
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git add precios.db
+          git diff --cached --quiet || git commit -m "Priser $(date -u +%F)"
+          git push
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: salida
+      - id: deploy
+        uses: actions/deploy-pages@v4

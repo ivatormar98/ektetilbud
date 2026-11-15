@@ -1,0 +1,282 @@
+[
+ {
+  "name": "Beyerdynamic DT 990 Pro 80 Ohm over-ear hodetelefoner",
+  "brand": "Beyerdynamic",
+  "category": "Hodetelefoner",
+  "price": 1719,
+  "image": "https://cdn.pji.nu/product/standard/280/10707808.jpg"
+ },
+ {
+  "name": "Bose QuietComfort Earbuds 2024 in-ear ørepropper",
+  "brand": "Bose",
+  "category": "Hodetelefoner",
+  "price": 1539,
+  "image": "https://cdn.pji.nu/product/standard/280/13877830.jpg"
+ },
+ {
+  "name": "Samsung The Frame Pro LS03HW 65\" 4K Ultra HD Neo QLED Mini-LED AI Smart TV (2026) - TQ65LS03HWUXXC",
+  "brand": "Samsung",
+  "category": "TV",
+  "price": 18739,
+  "image": "https://cdn.pji.nu/product/standard/280/16511197.jpg"
+ },
+ {
+  "name": "Samsung The Frame Pro LS03HW 55\" 4K Ultra HD Neo QLED Mini-LED AI Smart TV (2026) - TQ55LS03HWUXXC",
+  "brand": "Samsung",
+  "category": "TV",
+  "price": 14449,
+  "image": "https://cdn.pji.nu/product/standard/280/16511490.jpg"
+ },
+ {
+  "name": "Philips 27E1N1100A 27\"",
+  "brand": "Philips",
+  "category": "PC-skjermer",
+  "price": 1029,
+  "image": "https://cdn.pji.nu/product/standard/280/13463112.jpg"
+ },
+ {
+  "name": "Philips 49B2U5900C/00 48.8\" SuperWide VA Buet 75Hz QHD USB-C Dokking 100W",
+  "brand": "Philips",
+  "category": "PC-skjermer",
+  "price": 8429,
+  "image": "https://cdn.pji.nu/product/standard/280/15633536.jpg"
+ },
+ {
+  "name": "Samsung Galaxy A57 5G 8GB RAM 128GB",
+  "brand": "Samsung",
+  "category": "Mobiltelefoner",
+  "price": 4009,
+  "image": "https://cdn.pji.nu/product/standard/280/16169312.jpg"
+ },
+ {
+  "name": "Samsung Galaxy S26 5G 12GB RAM 256GB",
+  "brand": "Samsung",
+  "category": "Mobiltelefoner",
+  "price": 8539,
+  "image": "https://cdn.pji.nu/product/standard/280/15936867.jpg"
+ },
+ {
+  "name": "Electrolux EFI742RX4G",
+  "brand": "Electrolux",
+  "category": "Vaskemaskin",
+  "price": 7549,
+  "image": "https://cdn.pji.nu/product/standard/280/13794140.jpg"
+ },
+ {
+  "name": "Bosch WGG254FTSN (Hvit)",
+  "brand": "Bosch",
+  "category": "Vaskemaskin",
+  "price": 10139,
+  "image": "https://cdn.pji.nu/product/standard/280/14909385.jpg"
+ },
+ {
+  "name": "Logitech MX Keys Mini (Nordic)",
+  "brand": "Logitech",
+  "category": "Tastatur",
+  "price": 1009,
+  "image": "https://cdn.pji.nu/product/standard/280/5871411.jpg"
+ },
+ {
+  "name": "Logitech MX Keys S (Nordic)",
+  "brand": "Logitech",
+  "category": "Tastatur",
+  "price": 989,
+  "image": "https://cdn.pji.nu/product/standard/280/10860317.jpg"
+ },
+ {
+  "name": "Bissell Spotclean Hydrosteam Select Gulvrenser 3697N",
+  "brand": "Bissell",
+  "category": "Støvsugere",
+  "price": 2529,
+  "image": "https://cdn.pji.nu/product/standard/280/13489772.jpg"
+ },
+ {
+  "name": "Bissell SpotClean Pro 1558N",
+  "brand": "Bissell",
+  "category": "Støvsugere",
+  "price": 1669,
+  "image": "https://cdn.pji.nu/product/standard/280/4593736.jpg"
+ },
+ {
+  "name": "Bjørn Dæhlie Half-Zip Comfy (Herre)",
+  "brand": "Bjørn",
+  "category": "Jakker",
+  "price": 859,
+  "image": "https://cdn.pji.nu/product/standard/280/3366109.jpg"
+ },
+ {
+  "name": "Mountain Equipment Senja Jacket (Herre)",
+  "brand": "Mountain",
+  "category": "Jakker",
+  "price": 2819,
+  "image": "https://cdn.pji.nu/product/standard/280/5628904.jpg"
+ },
+ {
+  "name": "Samsung Galaxy Watch8 Classic 46mm LTE",
+  "brand": "Samsung",
+  "category": "Smartklokker",
+  "price": 4109,
+  "image": "https://cdn.pji.nu/product/standard/280/15035838.jpg"
+ },
+ {
+  "name": "Huawei Watch Fit 4 Pro",
+  "brand": "Huawei",
+  "category": "Smartklokker",
+  "price": 1869,
+  "image": "https://cdn.pji.nu/product/standard/280/14671241.jpg"
+ },
+ {
+  "name": "Dolce & Gabbana Light Blue edt 50ml",
+  "brand": "Dolce",
+  "category": "Parfyme",
+  "price": 459,
+  "image": "https://cdn.pji.nu/product/standard/280/196270.jpg"
+ },
+ {
+  "name": "Davidoff Cool Water Man edt 125ml",
+  "brand": "Davidoff",
+  "category": "Parfyme",
+  "price": 289,
+  "image": "https://cdn.pji.nu/product/standard/280/216569.jpg"
+ },
+ {
+  "name": "Dreame X60 Ultra",
+  "brand": "Dreame",
+  "category": "Robotstøvsuger",
+  "price": 11679,
+  "image": "https://cdn.pji.nu/product/standard/280/16191919.jpg"
+ },
+ {
+  "name": "Roborock Q7 TF+",
+  "brand": "Roborock",
+  "category": "Robotstøvsuger",
+  "price": 2449,
+  "image": "https://cdn.pji.nu/product/standard/280/14903309.jpg"
+ },
+ {
+  "name": "Bosch Serie 2 SMU2HVS06E",
+  "brand": "Bosch",
+  "category": "Oppvaskmaskiner",
+  "price": 6089,
+  "image": "https://cdn.pji.nu/product/standard/280/15481109.jpg"
+ },
+ {
+  "name": "Siemens SN45ZS08CE (Rustfritt)",
+  "brand": "Siemens",
+  "category": "Oppvaskmaskiner",
+  "price": 8429,
+  "image": "https://cdn.pji.nu/product/standard/280/13400792.jpg"
+ },
+ {
+  "name": "Logitech M705",
+  "brand": "Logitech",
+  "category": "Mus & pekeenheter",
+  "price": 269,
+  "image": "https://cdn.pji.nu/product/standard/280/478085.jpg"
+ },
+ {
+  "name": "Logitech G305 Lightspeed",
+  "brand": "Logitech",
+  "category": "Mus & pekeenheter",
+  "price": 319,
+  "image": "https://cdn.pji.nu/product/standard/280/4805874.jpg"
+ },
+ {
+  "name": "Philips 2200 Series EP2224",
+  "brand": "Philips",
+  "category": "Espressomaskiner",
+  "price": 2749,
+  "image": "https://cdn.pji.nu/product/standard/280/7303391.jpg"
+ },
+ {
+  "name": "Ninja Luxe Café Mini ES301EU",
+  "brand": "Ninja",
+  "category": "Espressomaskiner",
+  "price": 5109,
+  "image": "https://cdn.pji.nu/product/standard/280/16561566.jpg"
+ },
+ {
+  "name": "LEGO Star Wars 75440 AT-AT™",
+  "brand": "LEGO",
+  "category": "LEGO",
+  "price": 519,
+  "image": "https://cdn.pji.nu/product/standard/280/15881143.jpg"
+ },
+ {
+  "name": "LEGO ONE PIECE 75636 Vindmøllelandsbyhytte",
+  "brand": "LEGO",
+  "category": "LEGO",
+  "price": 219,
+  "image": "https://cdn.pji.nu/product/standard/280/14879664.jpg"
+ },
+ {
+  "name": "Sony SRS-XB100",
+  "brand": "Sony",
+  "category": "Mobilhøyttalere",
+  "price": 399,
+  "image": "https://cdn.pji.nu/product/standard/280/11446936.jpg"
+ },
+ {
+  "name": "Kooduu Serena Play Sound by JBL Bluetooth-høyttaler",
+  "brand": "Kooduu",
+  "category": "Mobilhøyttalere",
+  "price": 1379,
+  "image": "https://cdn.pji.nu/product/standard/280/15916662.jpg"
+ },
+ {
+  "name": "NutriBullet Pro 907",
+  "brand": "NutriBullet",
+  "category": "Miksere og blendere",
+  "price": 779,
+  "image": "https://cdn.pji.nu/product/standard/280/13504252.jpg"
+ },
+ {
+  "name": "Ninja Blast BC151",
+  "brand": "Ninja",
+  "category": "Miksere og blendere",
+  "price": 579,
+  "image": "https://cdn.pji.nu/product/standard/280/12910454.jpg"
+ },
+ {
+  "name": "Electrolux Ltb1ae24w0 (Hvit)",
+  "brand": "Electrolux",
+  "category": "Kombiskap",
+  "price": 4259,
+  "image": "https://cdn.pji.nu/product/standard/280/12962721.jpg"
+ },
+ {
+  "name": "Siemens KF96DPXEA (Svart)",
+  "brand": "Siemens",
+  "category": "Kombiskap",
+  "price": 31869,
+  "image": "https://cdn.pji.nu/product/standard/280/13622965.jpg"
+ },
+ {
+  "name": "Creative Sound Blaster GS3",
+  "brand": "Creative",
+  "category": "Lydplanke",
+  "price": 559,
+  "image": "https://cdn.pji.nu/product/standard/280/13300429.jpg"
+ },
+ {
+  "name": "Samsung Q-Series Soundbar HW-Q995H",
+  "brand": "Samsung",
+  "category": "Lydplanke",
+  "price": 13679,
+  "image": "https://cdn.pji.nu/product/standard/280/16541033.jpg"
+ },
+ {
+  "name": "Hoka Bondi 9 (Herre)",
+  "brand": "Hoka",
+  "category": "Løpesko",
+  "price": 1359,
+  "image": "https://cdn.pji.nu/product/standard/280/14037112.jpg"
+ },
+ {
+  "name": "Hoka Bondi 9 (Dame)",
+  "brand": "Hoka",
+  "category": "Løpesko",
+  "price": 1379,
+  "image": "https://cdn.pji.nu/product/standard/280/14037121.jpg"
+ }
+]

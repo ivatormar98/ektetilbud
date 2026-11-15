@@ -1,0 +1,4 @@
+feeds/
+*.part
+__pycache__/
+salida/index.html
