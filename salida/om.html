@@ -3,37 +3,53 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Om tjenesten</title>
-<style>
-:root{--bg:#f6f5f2;--ink:#1d1d1b;--mute:#6b6a66}
-@media (prefers-color-scheme:dark){:root{--bg:#141413;--ink:#eeede9;--mute:#a19f98}}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
-main{max-width:680px;margin:0 auto;padding:28px 16px 48px}
-a{color:inherit}
-.mute{color:var(--mute)}
-</style>
+<title>Om Ektetilbud</title>
+<meta name="description" content="Slik regner Ektetilbud ut ekte rabatt og avslører falske rabatter i norske nettbutikker.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif&display=swap" rel="stylesheet">
+<!--GOATCOUNTER-->
+<link rel="stylesheet" href="side.css">
 </head>
 <body>
-<main>
-<p><a href="index.html">← Tilbake til tilbudene</a></p>
-<h1>Om tjenesten</h1>
-<p>Vi samler tilbud fra norske nettbutikker og viser bare dem som faktisk er billigere enn vanlig.</p>
+<header class="hero">
+  <div class="wrap">
+    <nav aria-label="Hovedmeny">
+      <a class="logo" href="index.html"><span class="mini" aria-hidden="true"></span>Ektetilbud</a>
+      <div class="links"><a href="index.html#tilbud">Dagens tilbud</a><a href="black-friday.html">Black Friday-guide</a><a href="om.html" aria-current="page">Om tjenesten</a></div>
+    </nav>
+    <div class="intro">
+      <h1>Om Ektetilbud</h1>
+      <p class="lead">Vi samler tilbud fra norske nettbutikker og viser bare dem som faktisk er billigere enn vanlig.</p>
+    </div>
+  </div>
+</header>
 
-<h2>Slik regner vi ut ekte rabatt</h2>
-<ul>
-  <li>Vi lagrer prisen på hvert produkt i hver butikk hver dag.</li>
-  <li>Et tilbud vises når prisen er minst 10 % lavere enn medianen av laveste pris de siste 90 dagene, og samtidig den laveste prisen de siste 30 dagene.</li>
-  <li>Vi trenger minst 14 dager med prishistorikk før vi vurderer et produkt.</li>
-</ul>
+<main class="wrap">
+<article>
+  <h2>Slik regner vi ut ekte rabatt</h2>
+  <ul>
+    <li>Vi lagrer prisen på hvert produkt i hver butikk hver dag.</li>
+    <li>Et tilbud vises når prisen er minst 10 % lavere enn medianen av laveste pris de siste 90 dagene, og samtidig den laveste prisen de siste 30 dagene.</li>
+    <li>Vi trenger minst 14 dager med prishistorikk før vi vurderer et produkt.</li>
+  </ul>
 
-<h2>Falske rabatter</h2>
-<p>Når en butikk markedsfører en vare som nedsatt, skal rabatten ifølge prisopplysningsforskriften regnes fra førprisen: den laveste prisen butikken har brukt de siste 30 dagene før salget startet. Er førprisen butikken oppgir høyere enn det, viser vi det under «Rabatter som ikke er ekte». Vi viser bare tallene, slik vi har registrert dem.</p>
+  <h2>Falske rabatter</h2>
+  <p>Når en butikk markedsfører en vare som nedsatt, skal rabatten ifølge prisopplysningsforskriften regnes fra førprisen: den laveste prisen butikken har brukt de siste 30 dagene før salget startet. Er førprisen butikken oppgir høyere enn det, viser vi det under «Rabatter som ikke er ekte». Vi viser bare tallene, slik vi har registrert dem. Les mer i <a href="black-friday.html">guiden vår</a>.</p>
 
-<h2>Annonselenker</h2>
-<p>Lenkene til butikkene er annonselenker. Handler du via dem, får vi en provisjon fra butikken. Prisen blir ikke høyere for deg, og provisjonen påvirker ikke hvilke tilbud vi viser: rekkefølgen bestemmes bare av rabatt, besparelse og antall butikker.</p>
+  <h2>Annonselenker</h2>
+  <p>Lenkene til butikkene er annonselenker. Handler du via dem, får vi en provisjon fra butikken. Prisen blir ikke høyere for deg, og provisjonen påvirker ikke hvilke tilbud vi viser: rekkefølgen bestemmes bare av rabatt, besparelse og antall butikker.</p>
 
-<h2>Kontakt</h2>
-<p>Feil pris eller et tilbud vi har gått glipp av? Skriv til <!-- TODO: din e-post --><span class="mute">[din e-post]</span>.</p>
+  <h2>Kontakt</h2>
+  <p>Feil pris eller et tilbud vi har gått glipp av? Skriv til oss på <a href="https://github.com/ivatormar98/ektetilbud/issues">GitHub</a>.</p>
+</article>
 </main>
+
+<footer>
+  <div class="wrap">
+    <p>Ektetilbud viser bare tilbud som faktisk er billigere enn vanlig.</p>
+    <nav aria-label="Bunnmeny"><a href="black-friday.html">Black Friday-guide</a><a href="personvern.html">Personvern</a></nav>
+  </div>
+</footer>
 </body>
 </html>

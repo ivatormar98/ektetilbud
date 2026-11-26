@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ektetilbud – bare tilbud som faktisk er billigere</title>
+<meta name="description" content="Vi sjekker prisene i norske nettbutikker hver dag og viser bare tilbud som faktisk er billigere enn vanlig. Falske rabatter avslører vi.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif&display=swap" rel="stylesheet">
+<!--GOATCOUNTER-->
+<style>
+/* Ink ramp (Nordic winter) + one accent: the yellow shelf price tag */
+:root{
+  --bg:#f5f7fa;--card:#fff;--raised:#eceff4;--media:#fff;
+  --ink:#111827;--ink2:#4b5565;--mute:#6b7487;--line:rgba(17,24,39,.08);--line2:rgba(17,24,39,.14);
+  --tag:#ffc83d;--tag-ink:#111827;--tag-text:#8a6100;
+  --good:#16a34a;--bad:#dc2626;
+  --hero:#0e1220;--hero2:#161b2b;--hero-ink:#eef0f5;--hero-ink2:#a3a9b8;--hero-line:rgba(238,240,245,.1);
+  --shadow:0 1px 2px rgba(0,0,0,.05);--lift:0 8px 24px rgba(17,24,39,.08);
+  --ease:cubic-bezier(.22,1,.36,1);
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#0b0d14;--card:#11141c;--raised:#1a1e28;--media:#f4f5f7;
+  --ink:#eef0f5;--ink2:#a3a9b8;--mute:#7a8296;--line:rgba(238,240,245,.08);--line2:rgba(238,240,245,.14);
+  --tag-text:#ffc83d;--good:#4cc38a;--bad:#e5484d;
+  --hero:#070910;--hero2:#11141c;--shadow:none;--lift:none;
+}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.wrap{max-width:1200px;margin:0 auto;padding:0 24px}
+:focus-visible{outline:2px solid var(--tag);outline-offset:2px;border-radius:6px}
+
+/* example strip */
+.demo{background:var(--tag);color:var(--tag-ink);font-size:14px;padding:8px 0}
+
+/* hero: always dark, the night the yellow tag stands out in */
+.hero{background:var(--hero);color:var(--hero-ink)}
+nav{display:flex;align-items:center;justify-content:space-between;height:64px}
+.logo{display:flex;align-items:center;gap:8px;font-weight:600;font-size:17px;text-decoration:none}
+.logo .mini{width:20px;height:12px;background:var(--tag);clip-path:polygon(5px 0,100% 0,100% 100%,5px 100%,0 50%);border-radius:0 3px 3px 0}
+nav .links{display:flex;gap:24px;font-size:14px;color:var(--hero-ink2)}
+nav .links a{text-decoration:none;transition:color .15s var(--ease)}
+nav .links a:hover{color:var(--hero-ink)}
+.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;padding:48px 0 64px}
+h1{font:400 60px/1.04 "Instrument Serif",Georgia,serif;letter-spacing:-.02em;margin:0;max-width:14ch}
+.lead{font-size:18px;line-height:28px;color:var(--hero-ink2);margin:20px 0 0;max-width:34rem}
+.actions{display:flex;gap:12px;margin-top:32px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;height:44px;padding:0 20px;border-radius:10px;font-weight:500;text-decoration:none;transition:background-color .15s var(--ease),transform .15s var(--ease)}
+.btn:active{transform:scale(.98)}
+.btn.primary{background:var(--tag);color:var(--tag-ink)}
+.btn.primary:hover{background:#ffd666}
+.btn.ghost{color:var(--hero-ink);box-shadow:inset 0 0 0 1px var(--hero-line)}
+.btn.ghost:hover{background:var(--hero2)}
+.sub{font-size:13px;color:var(--hero-ink2);margin:24px 0 0;font-variant-numeric:tabular-nums}
+
+/* the moment: how a fake discount looks in the price history */
+.explain{margin:0;background:var(--hero2);border:1px solid var(--hero-line);border-radius:16px;padding:24px}
+.explain h2{font-size:15px;font-weight:500;margin:0 0 4px;color:var(--hero-ink)}
+.explain p{margin:0;font-size:13px;color:var(--hero-ink2)}
+.explain svg{display:block;width:100%;height:auto;margin-top:16px}
+.verdict{display:flex;gap:24px;margin-top:16px;font-size:13px;color:var(--hero-ink2)}
+.verdict b{display:block;font-size:22px;font-weight:500;color:var(--hero-ink);font-variant-numeric:tabular-nums}
+.verdict .no b{color:#e5484d;text-decoration:line-through;text-decoration-thickness:2px}
+
+/* deals */
+main{padding:48px 0 64px}
+.head{display:flex;align-items:end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+.head h2,.fk h2{font:400 32px/1.15 "Instrument Serif",Georgia,serif;margin:0}
+.head p,.fk>p{margin:4px 0 0;color:var(--ink2);font-size:14px;max-width:42rem}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:24px}
+.chip{height:32px;padding:0 12px;border-radius:8px;border:1px solid var(--line2);background:var(--card);color:var(--ink2);font:inherit;font-size:14px;cursor:pointer;transition:background-color .15s var(--ease),color .15s var(--ease)}
+.chip:hover{color:var(--ink)}
+.chip[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+select{height:32px;font:inherit;font-size:14px;padding:0 8px;border-radius:8px;border:1px solid var(--line2);background:var(--card);color:var(--ink);margin-left:auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.grid>p{grid-column:1/-1;max-width:40rem;color:var(--ink2);margin:0}
+.card{position:relative;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:8px;display:flex;flex-direction:column;box-shadow:var(--shadow);transition:border-color .15s var(--ease),box-shadow .15s var(--ease)}
+.card:hover{border-color:var(--line2);box-shadow:var(--lift)}
+.media{position:relative;height:176px;border-radius:8px;background:var(--media);display:grid;place-items:center;overflow:hidden}
+.media img{width:100%;height:100%;object-fit:contain;padding:16px}
+.media.noimg{background:var(--raised);color:var(--mute)}
+.media.noimg svg{width:40px;height:40px;stroke-width:1.25}
+/* signature: the shelf price tag with its hole */
+.tag{position:absolute;top:12px;left:12px;background:var(--tag);color:var(--tag-ink);font-weight:600;font-size:15px;line-height:28px;height:28px;padding:0 10px 0 20px;clip-path:polygon(10px 0,100% 0,100% 100%,10px 100%,0 50%);border-radius:0 6px 6px 0;font-variant-numeric:tabular-nums}
+.tag::before{content:"";position:absolute;left:8px;top:12px;width:4px;height:4px;border-radius:50%;background:var(--tag-ink);opacity:.35}
+.temp{position:absolute;top:12px;right:12px;font-size:12px;line-height:24px;padding:0 8px;border-radius:6px;background:var(--card);color:var(--ink2);box-shadow:0 0 0 1px var(--line);font-variant-numeric:tabular-nums}
+.temp.hot{background:#111827;color:var(--tag)}
+.body{display:flex;flex-direction:column;gap:4px;padding:12px 8px 8px;flex:1}
+.cat{font-size:12px;color:var(--mute)}
+.name{font-weight:500;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.7em}
+.prices{display:flex;align-items:baseline;gap:8px;margin-top:8px}
+.price{font-size:26px;font-weight:600;line-height:1;font-variant-numeric:tabular-nums}
+.was{color:var(--mute);font-size:14px;text-decoration:line-through;font-variant-numeric:tabular-nums}
+.where{font-size:13px;color:var(--ink2)}
+.warn{font-size:13px;color:var(--bad)}
+svg.spark{width:100%;height:36px;margin:8px 0 4px}
+svg.spark .area{fill:var(--good);opacity:.08}
+svg.spark polyline{fill:none;stroke:var(--mute);stroke-width:1.5;vector-effect:non-scaling-stroke}
+svg.spark circle{fill:var(--good)}
+.stores{font-size:12px;color:var(--mute);font-variant-numeric:tabular-nums}
+.go{margin-top:12px;display:flex;align-items:center;justify-content:center;gap:8px;height:40px;border-radius:8px;background:var(--raised);color:var(--ink);text-decoration:none;font-weight:500;font-size:14px;transition:background-color .15s var(--ease)}
+a.go:hover{background:var(--ink);color:var(--bg)}
+span.go{color:var(--mute)}
+.go svg{width:16px;height:16px;stroke-width:1.5}
+
+/* fake discounts */
+.fk{margin-top:64px}
+.tbl{overflow-x:auto;margin-top:16px;background:var(--card);border:1px solid var(--line);border-radius:16px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{font-weight:500;color:var(--mute);font-size:12px;text-align:left;padding:12px 16px;border-bottom:1px solid var(--line)}
+td{padding:12px 16px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr:last-child td{border-bottom:0}
+td .media{width:48px;height:48px;border-radius:8px}
+td .media img{padding:4px}
+td .media.noimg svg{width:20px;height:20px}
+.claim{color:var(--bad);text-decoration:line-through;font-variant-numeric:tabular-nums;white-space:nowrap}
+.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+td .mute{color:var(--mute);font-size:13px}
+
+footer{border-top:1px solid var(--line);padding:24px 0 40px;color:var(--mute);font-size:13px}
+footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+footer p{margin:0;max-width:44rem}
+footer nav{height:auto;gap:16px}
+
+@media (max-width:860px){
+  .hero-grid{grid-template-columns:1fr;gap:32px;padding:32px 0 48px}
+  h1{font-size:40px}
+  nav .links{display:none}
+  .wrap{padding:0 16px}
+}
+</style>
+</head>
+<body>
+<div class="demo" id="demo" hidden><div class="wrap"><strong>Eksempel.</strong> Prisene, butikkene og prishistorikken på denne siden er oppdiktet for å vise hvordan tjenesten fungerer. Dette er ikke ekte tilbud. <a href="index.html">Til forsiden</a></div></div>
+
+<header class="hero">
+  <div class="wrap">
+    <nav aria-label="Hovedmeny">
+      <a class="logo" href="index.html"><span class="mini" aria-hidden="true"></span>Ektetilbud</a>
+      <div class="links"><a href="#tilbud">Dagens tilbud</a><a href="#falske">Falske rabatter</a><a href="black-friday.html">Black Friday-guide</a><a href="om.html">Om tjenesten</a></div>
+    </nav>
+    <div class="hero-grid">
+      <div>
+        <h1>Bare tilbud som faktisk er billigere</h1>
+        <p class="lead">Vi sjekker prisene i norske nettbutikker hver dag og viser bare tilbud som faktisk er billigere enn vanlig. Falske rabatter avslører vi.</p>
+        <div class="actions">
+          <a class="btn primary" href="#tilbud">Se dagens tilbud</a>
+          <a class="btn ghost" href="om.html">Slik regner vi</a>
+        </div>
+        <p class="sub" id="sub"></p>
+      </div>
+      <figure class="explain" aria-labelledby="ex-t">
+        <h2 id="ex-t">Slik ser en falsk rabatt ut</h2>
+        <p>Butikken hever prisen i tre uker, og «setter den ned» igjen.</p>
+        <svg viewBox="0 0 480 220" role="img" aria-label="Prisgraf: 999 kr i en måned, hevet til 1 249 kr i tre uker, deretter «salg» tilbake til 999 kr">
+          <g stroke="rgba(238,240,245,.08)">
+            <line x1="0" y1="40" x2="480" y2="40"/><line x1="0" y1="100" x2="480" y2="100"/><line x1="0" y1="160" x2="480" y2="160"/>
+          </g>
+          <line x1="0" y1="160" x2="480" y2="160" stroke="#a3a9b8" stroke-dasharray="4 4" stroke-width="1.25"/>
+          <text x="4" y="180" fill="#a3a9b8" font-size="15" font-family="Instrument Sans,sans-serif">Laveste pris siste 30 dager: 999 kr</text>
+          <path d="M0 160H200L208 60H330L338 160H480V220H0Z" fill="rgba(238,240,245,.04)"/>
+          <path d="M0 160H200L208 60H330L338 160H480" fill="none" stroke="#eef0f5" stroke-width="2.5" stroke-linejoin="round"/>
+          <text x="214" y="50" fill="#a3a9b8" font-size="15" font-family="Instrument Sans,sans-serif">1 249 kr i tre uker</text>
+          <circle cx="480" cy="160" r="5" fill="#ffc83d"/>
+          <g transform="translate(356 118)">
+            <path d="M12 0H104a6 6 0 0 1 6 6V26a6 6 0 0 1-6 6H12L0 16Z" fill="#ffc83d"/>
+            <circle cx="10" cy="16" r="2.5" fill="#111827" opacity=".35"/>
+            <text x="20" y="21" fill="#111827" font-size="13" font-weight="600" font-family="Instrument Sans,sans-serif">«Salg» −20 %</text>
+          </g>
+        </svg>
+        <div class="verdict">
+          <div class="no">Butikken oppgir<b>−20 %</b></div>
+          <div>Ekte rabatt<b>0 %</b></div>
+        </div>
+      </figure>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section id="tilbud">
+    <div class="head">
+      <div>
+        <h2>Dagens tilbud</h2>
+        <p>Minst 10 % under prisen de siste 90 dagene, og den laveste prisen den siste måneden.</p>
+      </div>
+    </div>
+    <div class="bar" id="bar"></div>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section class="fk" id="falske">
+    <h2>Rabatter som ikke er ekte</h2>
+    <p>Førprisen butikken oppgir er høyere enn den laveste prisen butikken selv tok de siste 30 dagene før salget startet. Ifølge prisopplysningsforskriften skal rabatten regnes fra den laveste prisen.</p>
+    <div class="tbl"><table>
+      <thead><tr><th><span hidden>Bilde</span></th><th>Produkt</th><th>Butikk</th><th>Oppgir</th><th>Reelt mot laveste pris 30 dager</th></tr></thead>
+      <tbody id="fakes"></tbody>
+    </table></div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Annonselenker: Handler du via lenkene våre, får vi provisjon fra butikken. Det koster deg ikke noe ekstra. Ekte rabatt regnes mot medianen av laveste pris de siste 90 dagene.</p>
+    <nav aria-label="Bunnmeny"><a href="black-friday.html">Black Friday-guide</a><a href="om.html">Om tjenesten</a><a href="personvern.html">Personvern</a></nav>
+  </div>
+</footer>
+
+<script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<script>
+const D = {"day": "2026-11-15", "deals": [{"name": "Philips 49B2U5900C/00 48.8\" SuperWide VA Buet 75Hz QHD USB-C Dokking 100W", "brand": "Philips", "cat": "Data", "img": "", "price": 5679.0, "store": "Butikk D", "url": "#", "real": 30, "ref": 8109, "claimed": 29, "stores": [["Butikk D", 5679.0], ["Butikk A", 8109.0], ["Butikk B", 8309.0], ["Butikk C", 8589.0]], "hist": [8259.0, 8259.0, 8259.0, 8259.0, 8259.0, 8259.0, 8259.0, 8259.0, 8259.0, 8259.0, 8149.0, 8149.0, 8149.0, 8149.0, 8149.0, 8149.0, 8149.0, 8149.0, 8149.0, 8149.0, 8029.0, 8029.0, 8029.0, 8029.0, 8029.0, 8029.0, 8029.0, 8029.0, 8029.0, 8029.0, 8059.0, 8059.0, 8059.0, 8059.0, 8059.0, 8059.0, 8059.0, 8059.0, 8059.0, 8059.0, 8109.0, 8109.0, 8109.0, 8109.0, 8109.0, 8109.0, 8109.0, 8109.0, 8109.0, 8109.0, 8109.0, 8109.0, 8109.0, 8109.0, 8109.0, 8109.0, 8109.0, 5679.0, 5679.0, 5679.0], "t": 165}, {"name": "Samsung The Frame Pro LS03HW 55\" 4K Ultra HD Neo QLED Mini-LED AI Smart TV (2026) - TQ55LS03HWUXXC", "brand": "Samsung", "cat": "TV", "img": "", "price": 10439.0, "store": "Butikk A", "url": "#", "real": 25, "ref": 13999, "claimed": 25, "stores": [["Butikk A", 10439.0], ["Butikk C", 14329.0]], "hist": [14129.0, 14129.0, 14129.0, 14129.0, 14129.0, 14129.0, 14129.0, 14129.0, 14129.0, 14129.0, 14209.0, 14209.0, 14209.0, 14209.0, 14209.0, 14209.0, 14209.0, 14209.0, 14209.0, 14209.0, 13999.0, 13999.0, 13999.0, 13999.0, 13999.0, 13999.0, 13999.0, 13999.0, 13999.0, 13999.0, 13969.0, 13969.0, 13969.0, 13969.0, 13969.0, 13969.0, 13969.0, 13969.0, 13969.0, 13969.0, 13959.0, 13959.0, 13959.0, 13959.0, 13959.0, 13959.0, 13959.0, 13959.0, 13959.0, 13959.0, 14149.0, 14149.0, 14149.0, 14149.0, 14149.0, 14149.0, 14149.0, 10439.0, 10439.0, 10439.0], "t": 153}, {"name": "Huawei Watch Fit 4 Pro", "brand": "Huawei", "cat": "Sport og trening", "img": "", "price": 1339.0, "store": "Butikk D", "url": "#", "real": 30, "ref": 1909, "claimed": 28, "stores": [["Butikk D", 1339.0], ["Butikk A", 1889.0]], "hist": [1879.0, 1879.0, 1879.0, 1879.0, 1879.0, 1879.0, 1879.0, 1879.0, 1879.0, 1879.0, 1869.0, 1869.0, 1869.0, 1869.0, 1869.0, 1869.0, 1869.0, 1869.0, 1869.0, 1869.0, 1949.0, 1949.0, 1949.0, 1949.0, 1949.0, 1949.0, 1949.0, 1949.0, 1949.0, 1949.0, 1919.0, 1919.0, 1919.0, 1919.0, 1919.0, 1919.0, 1919.0, 1919.0, 1919.0, 1919.0, 1909.0, 1909.0, 1909.0, 1909.0, 1909.0, 1909.0, 1909.0, 1909.0, 1909.0, 1909.0, 1889.0, 1889.0, 1889.0, 1889.0, 1889.0, 1889.0, 1889.0, 1339.0, 1339.0, 1339.0], "t": 145}, {"name": "Electrolux EFI742RX4G", "brand": "Electrolux", "cat": "Hvitevarer", "img": "", "price": 5919.0, "store": "Butikk A", "url": "#", "real": 20, "ref": 7409, "claimed": 22, "stores": [["Butikk A", 5919.0], ["Butikk C", 7359.0], ["Butikk B", 7609.0], ["Butikk D", 7709.0]], "hist": [7399.0, 7399.0, 7399.0, 7399.0, 7399.0, 7399.0, 7399.0, 7399.0, 7399.0, 7399.0, 7409.0, 7409.0, 7409.0, 7409.0, 7409.0, 7409.0, 7409.0, 7409.0, 7409.0, 7409.0, 7169.0, 7169.0, 7169.0, 7169.0, 7169.0, 7169.0, 7169.0, 7169.0, 7169.0, 7169.0, 7579.0, 7579.0, 7579.0, 7579.0, 7579.0, 7579.0, 7579.0, 7579.0, 7579.0, 7579.0, 7429.0, 7429.0, 7429.0, 7429.0, 7429.0, 7429.0, 7429.0, 7429.0, 7429.0, 7429.0, 7359.0, 7359.0, 7359.0, 7359.0, 7359.0, 7359.0, 7359.0, 5919.0, 5919.0, 5919.0], "t": 129}, {"name": "Beyerdynamic DT 990 Pro 80 Ohm over-ear hodetelefoner", "brand": "Beyerdynamic", "cat": "Lyd", "img": "", "price": 1319.0, "store": "Butikk B", "url": "#", "real": 21, "ref": 1669, "claimed": 22, "stores": [["Butikk B", 1319.0], ["Butikk A", 1749.0], ["Butikk C", 1799.0]], "hist": [1679.0, 1679.0, 1679.0, 1679.0, 1679.0, 1679.0, 1679.0, 1679.0, 1679.0, 1679.0, 1659.0, 1659.0, 1659.0, 1659.0, 1659.0, 1659.0, 1659.0, 1659.0, 1659.0, 1659.0, 1699.0, 1699.0, 1699.0, 1699.0, 1699.0, 1699.0, 1699.0, 1699.0, 1699.0, 1699.0, 1669.0, 1669.0, 1669.0, 1669.0, 1669.0, 1669.0, 1669.0, 1669.0, 1669.0, 1669.0, 1619.0, 1619.0, 1619.0, 1619.0, 1619.0, 1619.0, 1619.0, 1619.0, 1619.0, 1619.0, 1719.0, 1719.0, 1719.0, 1719.0, 1719.0, 1719.0, 1719.0, 1319.0, 1319.0, 1319.0], "t": 113}, {"name": "Bjørn Dæhlie Half-Zip Comfy (Herre)", "brand": "Bjørn", "cat": "Klær og sko", "img": "", "price": 649.0, "store": "Butikk B", "url": "#", "real": 23, "ref": 839, "claimed": 22, "stores": [["Butikk B", 649.0], ["Butikk D", 829.0], ["Butikk A", 899.0], ["Butikk C", 919.0]], "hist": [839.0, 839.0, 839.0, 839.0, 839.0, 839.0, 839.0, 839.0, 839.0, 839.0, 839.0, 839.0, 839.0, 839.0, 839.0, 839.0, 839.0, 839.0, 839.0, 839.0, 829.0, 829.0, 829.0, 829.0, 829.0, 829.0, 829.0, 829.0, 829.0, 829.0, 849.0, 849.0, 849.0, 849.0, 849.0, 849.0, 849.0, 849.0, 849.0, 849.0, 839.0, 839.0, 839.0, 839.0, 839.0, 839.0, 839.0, 839.0, 839.0, 839.0, 829.0, 829.0, 829.0, 829.0, 829.0, 829.0, 829.0, 649.0, 649.0, 649.0], "t": 112}, {"name": "Bissell Spotclean Hydrosteam Select Gulvrenser 3697N", "brand": "Bissell", "cat": "Rengjøring", "img": "", "price": 2059.0, "store": "Butikk A", "url": "#", "real": 19, "ref": 2549, "claimed": 17, "stores": [["Butikk A", 2059.0], ["Butikk D", 2509.0]], "hist": [2469.0, 2469.0, 2469.0, 2469.0, 2469.0, 2469.0, 2469.0, 2469.0, 2469.0, 2469.0, 2589.0, 2589.0, 2589.0, 2589.0, 2589.0, 2589.0, 2589.0, 2589.0, 2589.0, 2589.0, 2609.0, 2609.0, 2609.0, 2609.0, 2609.0, 2609.0, 2609.0, 2609.0, 2609.0, 2609.0, 2549.0, 2549.0, 2549.0, 2549.0, 2549.0, 2549.0, 2549.0, 2549.0, 2549.0, 2549.0, 2519.0, 2519.0, 2519.0, 2519.0, 2519.0, 2519.0, 2519.0, 2519.0, 2519.0, 2519.0, 2509.0, 2509.0, 2509.0, 2509.0, 2509.0, 2509.0, 2509.0, 2059.0, 2059.0, 2059.0], "t": 110}, {"name": "Electrolux Ltb1ae24w0 (Hvit)", "brand": "Electrolux", "cat": "Hvitevarer", "img": "", "price": 3609.0, "store": "Butikk A", "url": "#", "real": 16, "ref": 4299, "claimed": 14, "stores": [["Butikk A", 3609.0], ["Butikk C", 4399.0], ["Butikk D", 4519.0]], "hist": [4299.0, 4299.0, 4299.0, 4299.0, 4299.0, 4299.0, 4299.0, 4299.0, 4299.0, 4299.0, 4139.0, 4139.0, 4139.0, 4139.0, 4139.0, 4139.0, 4139.0, 4139.0, 4139.0, 4139.0, 4329.0, 4329.0, 4329.0, 4329.0, 4329.0, 4329.0, 4329.0, 4329.0, 4329.0, 4329.0, 4269.0, 4269.0, 4269.0, 4269.0, 4269.0, 4269.0, 4269.0, 4269.0, 4269.0, 4269.0, 4489.0, 4489.0, 4489.0, 4489.0, 4489.0, 4489.0, 4489.0, 4489.0, 4489.0, 4489.0, 4369.0, 4369.0, 4369.0, 4369.0, 4369.0, 4369.0, 4369.0, 3609.0, 3609.0, 3609.0], "t": 106}, {"name": "Philips 2200 Series EP2224", "brand": "Philips", "cat": "Kjøkken", "img": "", "price": 2249.0, "store": "Butikk B", "url": "#", "real": 16, "ref": 2689, "claimed": 15, "stores": [["Butikk B", 2249.0], ["Butikk D", 2729.0], ["Butikk C", 2769.0]], "hist": [2739.0, 2739.0, 2739.0, 2739.0, 2739.0, 2739.0, 2739.0, 2739.0, 2739.0, 2739.0, 2749.0, 2749.0, 2749.0, 2749.0, 2749.0, 2749.0, 2749.0, 2749.0, 2749.0, 2749.0, 2659.0, 2659.0, 2659.0, 2659.0, 2659.0, 2659.0, 2659.0, 2659.0, 2659.0, 2659.0, 2689.0, 2689.0, 2689.0, 2689.0, 2689.0, 2689.0, 2689.0, 2689.0, 2689.0, 2689.0, 2629.0, 2629.0, 2629.0, 2629.0, 2629.0, 2629.0, 2629.0, 2629.0, 2629.0, 2629.0, 2729.0, 2729.0, 2729.0, 2729.0, 2729.0, 2729.0, 2729.0, 2249.0, 2249.0, 2249.0], "t": 100}, {"name": "Bose QuietComfort Earbuds 2024 in-ear ørepropper", "brand": "Bose", "cat": "Lyd", "img": "", "price": 1219.0, "store": "Butikk B", "url": "#", "real": 18, "ref": 1489, "claimed": 18, "stores": [["Butikk B", 1219.0], ["Butikk D", 1529.0]], "hist": [1489.0, 1489.0, 1489.0, 1489.0, 1489.0, 1489.0, 1489.0, 1489.0, 1489.0, 1489.0, 1489.0, 1489.0, 1489.0, 1489.0, 1489.0, 1489.0, 1489.0, 1489.0, 1489.0, 1489.0, 1439.0, 1439.0, 1439.0, 1439.0, 1439.0, 1439.0, 1439.0, 1439.0, 1439.0, 1439.0, 1459.0, 1459.0, 1459.0, 1459.0, 1459.0, 1459.0, 1459.0, 1459.0, 1459.0, 1459.0, 1499.0, 1499.0, 1499.0, 1499.0, 1499.0, 1499.0, 1499.0, 1499.0, 1499.0, 1499.0, 1509.0, 1509.0, 1509.0, 1509.0, 1509.0, 1509.0, 1509.0, 1219.0, 1219.0, 1219.0], "t": 99}, {"name": "Sony SRS-XB100", "brand": "Sony", "cat": "Lyd", "img": "", "price": 299.0, "store": "Butikk C", "url": "#", "real": 21, "ref": 379, "claimed": 19, "stores": [["Butikk C", 299.0], ["Butikk D", 369.0], ["Butikk A", 389.0], ["Butikk B", 409.0]], "hist": [369.0, 369.0, 369.0, 369.0, 369.0, 369.0, 369.0, 369.0, 369.0, 369.0, 379.0, 379.0, 379.0, 379.0, 379.0, 379.0, 379.0, 379.0, 379.0, 379.0, 389.0, 389.0, 389.0, 389.0, 389.0, 389.0, 389.0, 389.0, 389.0, 389.0, 369.0, 369.0, 369.0, 369.0, 369.0, 369.0, 369.0, 369.0, 369.0, 369.0, 379.0, 379.0, 379.0, 379.0, 379.0, 379.0, 379.0, 379.0, 379.0, 379.0, 369.0, 369.0, 369.0, 369.0, 369.0, 369.0, 369.0, 299.0, 299.0, 299.0], "t": 96}], "fakes": [{"name": "Philips 27E1N1100A 27\"", "img": "", "cat": "Data", "store": "Butikk D", "price": 1109.0, "old": 1549.0, "claimed": 28, "low": 1059.0, "real": -5, "url": "#"}, {"name": "Siemens SN45ZS08CE (Rustfritt)", "img": "", "cat": "Hvitevarer", "store": "Butikk D", "price": 8289.0, "old": 11609.0, "claimed": 29, "low": 8119.0, "real": -2, "url": "#"}, {"name": "Bissell SpotClean Pro 1558N", "img": "", "cat": "Rengjøring", "store": "Butikk C", "price": 1679.0, "old": 2349.0, "claimed": 29, "low": 1679.0, "real": 0, "url": "#"}, {"name": "Samsung Galaxy A57 5G 8GB RAM 128GB", "img": "", "cat": "Mobil og nettbrett", "store": "Butikk C", "price": 4069.0, "old": 5699.0, "claimed": 29, "low": 4069.0, "real": 0, "url": "#"}, {"name": "Samsung Galaxy Watch8 Classic 46mm LTE", "img": "", "cat": "Sport og trening", "store": "Butikk D", "price": 4149.0, "old": 5809.0, "claimed": 29, "low": 4149.0, "real": 0, "url": "#"}, {"name": "Logitech MX Keys S (Nordic)", "img": "", "cat": "Data", "store": "Butikk D", "price": 1029.0, "old": 1299.0, "claimed": 21, "low": 999.0, "real": -3, "url": "#"}, {"name": "Roborock Q7 TF+", "img": "", "cat": "Rengjøring", "store": "Butikk A", "price": 2429.0, "old": 3109.0, "claimed": 22, "low": 2389.0, "real": -2, "url": "#"}, {"name": "Hoka Bondi 9 (Dame)", "img": "", "cat": "Sport og trening", "store": "Butikk B", "price": 1309.0, "old": 1709.0, "claimed": 23, "low": 1339.0, "real": 2, "url": "#"}, {"name": "Dreame X60 Ultra", "img": "", "cat": "Rengjøring", "store": "Butikk C", "price": 11569.0, "old": 14949.0, "claimed": 23, "low": 11899.0, "real": 3, "url": "#"}, {"name": "LEGO Star Wars 75440 AT-AT™", "img": "", "cat": "Gaming og leker", "store": "Butikk B", "price": 539.0, "old": 649.0, "claimed": 17, "low": 529.0, "real": -2, "url": "#"}], "products": 40, "stores": ["Butikk A", "Butikk B", "Butikk C", "Butikk D"], "no_history": 0, "demo": true};
+const ICON = {"Mobil og nettbrett": "smartphone", "Rengjøring": "spray-can", "Sport og trening": "dumbbell", "Lyd": "headphones", "TV": "tv",
+  "Data": "monitor", "Gaming og leker": "gamepad-2", "Kjøkken": "chef-hat", "Hvitevarer": "washing-machine", "Klær og sko": "shirt",
+  "Helse og skjønnhet": "droplets", "Jul": "gift", "Annet": "package"};
+const kr = n => Math.round(n).toLocaleString("nb-NO") + " kr";
+const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+const icon = name => { const i = el("i"); i.dataset.lucide = name; return i; };
+const icons = () => window.lucide && lucide.createIcons();  // page still works if the icon script is blocked
+let cat = "Alle", sort = "t";
+document.getElementById("demo").hidden = !D.demo;
+
+document.getElementById("sub").textContent =
+  new Date(D.day).toLocaleDateString("nb-NO", {day: "numeric", month: "long", year: "numeric"}) + (D.products
+    ? ` · ${D.products} produkter i ${D.stores.length} butikker · ${D.deals.length} ekte tilbud · ${D.fakes.length} falske rabatter` : "");
+
+function media(img, category) {
+  const m = el("div", "media");
+  if (img) { const i = el("img"); i.src = img; i.alt = ""; i.loading = "lazy"; m.append(i); }
+  else { m.classList.add("noimg"); m.append(icon(ICON[category] || "package")); }
+  return m;
+}
+
+function spark(h) {
+  const NS = "http://www.w3.org/2000/svg", svg = document.createElementNS(NS, "svg");
+  svg.setAttribute("class", "spark"); svg.setAttribute("viewBox", "0 0 100 36"); svg.setAttribute("preserveAspectRatio", "none");
+  svg.setAttribute("role", "img"); svg.setAttribute("aria-label", "Laveste pris de siste dagene");
+  const lo = Math.min(...h), hi = Math.max(...h), y = v => 32 - (hi === lo ? 14 : (v - lo) / (hi - lo) * 28);
+  const pts = h.map((v, i) => [(i / (h.length - 1) * 98 + 1).toFixed(1), y(v).toFixed(1)]);
+  const area = document.createElementNS(NS, "path"); area.setAttribute("class", "area");
+  area.setAttribute("d", `M${pts[0][0]} 36 L${pts.map(p => p.join(" ")).join(" L")} L${pts.at(-1)[0]} 36Z`);
+  const line = document.createElementNS(NS, "polyline"); line.setAttribute("points", pts.map(p => p.join(",")).join(" "));
+  const dot = document.createElementNS(NS, "circle"); dot.setAttribute("cx", pts.at(-1)[0]); dot.setAttribute("cy", pts.at(-1)[1]); dot.setAttribute("r", 2.5);
+  svg.append(area, line, dot); return svg;
+}
+
+function card(d) {
+  const c = el("article", "card"), m = media(d.img, d.cat);
+  m.append(el("span", "tag", `−${d.real} %`), el("span", "temp" + (d.t >= 160 ? " hot" : ""), `${d.t}°`));
+  const b = el("div", "body"), pr = el("div", "prices");
+  pr.append(el("span", "price", kr(d.price)), el("span", "was", kr(d.ref)));
+  b.append(el("span", "cat", d.cat), el("div", "name", d.name), pr,
+           el("div", "where", `Billigst hos ${d.store} · ${d.stores.length} ${d.stores.length === 1 ? "butikk" : "butikker"}`));
+  if (d.claimed != null && Math.abs(d.claimed - d.real) >= 5) b.append(el("div", "warn", `Butikken oppgir −${d.claimed} %`));
+  b.append(spark(d.hist), el("div", "stores", d.stores.map(([s, p]) => `${s} ${kr(p)}`).join(" · ")));
+  if (D.demo) b.append(el("span", "go", "Eksempel – ingen lenke"));
+  else {
+    const a = el("a", "go", `Se hos ${d.store}`); a.href = d.url; a.target = "_blank"; a.rel = "sponsored noopener";
+    a.append(icon("arrow-up-right")); b.append(a);
+  }
+  c.append(m, b); return c;
+}
+
+function render() {
+  const g = document.getElementById("grid"); g.replaceChildren();
+  const list = D.deals.filter(d => cat === "Alle" || d.cat === cat)
+    .sort((a, b) => sort === "price" ? a.price - b.price : b[sort] - a[sort]);
+  list.forEach(d => g.append(card(d)));
+  if (!list.length && D.products) g.append(el("p", null, "Ingen ekte tilbud i denne kategorien i dag."));
+  if (!list.length && !D.products) {
+    const p = el("p", null, "Vi har nettopp startet og samler priser fra nettbutikkene hver dag. De første ekte tilbudene dukker opp her så snart vi har nok prishistorikk. ");
+    const a = el("a", null, "Se et eksempel på hvordan siden vil se ut"); a.href = "eksempel.html";
+    p.append(a, "."); g.append(p);
+  }
+  icons();
+}
+
+const bar = document.getElementById("bar");
+["Alle", ...new Set(D.deals.map(d => d.cat))].forEach(c => {
+  const b = el("button", "chip", c); b.setAttribute("aria-pressed", c === cat);
+  b.onclick = () => { cat = c; bar.querySelectorAll(".chip").forEach(x => x.setAttribute("aria-pressed", x === b)); render(); };
+  bar.append(b);
+});
+const s = el("select"); s.setAttribute("aria-label", "Sorter");
+[["t", "Hetest"], ["real", "Størst ekte rabatt"], ["price", "Lavest pris"]].forEach(([v, t]) => { const o = el("option", null, t); o.value = v; s.append(o); });
+s.onchange = () => { sort = s.value; render(); };
+bar.append(s);
+bar.hidden = !D.deals.length;  // no filters to show before the first deals
+
+const fb = document.getElementById("fakes");
+D.fakes.forEach(f => {
+  const tr = el("tr"), ti = el("td"), tp = el("td"), real = el("td");
+  ti.append(media(f.img, f.cat));
+  tp.append(el("div", null, f.name), el("div", "mute", `Nå ${kr(f.price)}`));
+  real.append(el("div", "num", f.real > 0 ? `−${f.real} %` : f.real === 0 ? "0 %" : `+${-f.real} %, dyrere`),
+              el("div", "mute", `Laveste pris var ${kr(f.low)}`));
+  const claim = el("td"); claim.append(el("div", "claim", `−${f.claimed} %`), el("div", "mute", `Før ${kr(f.old)}`));
+  tr.append(ti, tp, el("td", null, f.store), claim, real);
+  fb.append(tr);
+});
+if (!D.fakes.length) { const tr = el("tr"), td = el("td", "mute", "Ingen i dag."); td.colSpan = 5; tr.append(td); fb.append(tr); }
+render();
+</script>
+</body>
+</html>

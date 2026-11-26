@@ -155,7 +155,7 @@ def score(db, day=None):
                 low = presale_low(db, ean, o["store"], day)
                 claimed = round((o["old"] - o["price"]) / o["old"] * 100)
                 if low and claimed >= MIN_REAL and o["old"] > low * TOLERANCE:
-                    fakes.append({"name": o["name"], "img": o["img"], "store": shop(o["store"]), "price": o["price"], "old": o["old"],
+                    fakes.append({"name": o["name"], "img": o["img"], "cat": categorize(o["cat"], o["name"]), "store": shop(o["store"]), "price": o["price"], "old": o["old"],
                                   "claimed": claimed, "low": low, "real": round((low - o["price"]) / low * 100), "url": o["url"]})
         if len(past) < MIN_HISTORY:
             no_history += 1

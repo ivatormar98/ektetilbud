@@ -12,6 +12,8 @@ python test_pipeline.py           # comprobación rápida
 
 Después abre `salida/index.html` en el navegador.
 
+`python demo/lag_eksempel.py` genera `salida/eksempel.html`. Es la página de ejemplo que se publica para las tiendas: datos inventados, marcada como «Eksempel», con tiendas anónimas y sin fotos ni enlaces. La portada la enlaza mientras no haya datos reales. Nunca toca `precios.db`.
+
 ## Archivos
 
 | Archivo | Qué hace |
