@@ -46,7 +46,7 @@ Los nombres de columna se han escrito según la documentación de Adtraction y A
    - añade un *secret* en Settings → Secrets → Actions con la URL del catálogo (por ejemplo `FEED_KOMPLETT`); esa URL lleva tu token y no debe ir en el código
    - añade una línea `FEED_...` en el bloque `env` del workflow
 4. Pulsa «Run workflow» la primera vez. Después corre solo cada día.
-5. Rellena los `[din e-post]`, `[navn…]` y `[dato]` en `salida/om.html` y `salida/personvern.html`.
+5. Contacto: kontakt@ektetilbud.no, reenviado con ImprovMX (plan gratuito, solo recibe). Registros MX y SPF en Norgesdomene.
 6. Dominio propio: en Settings → Pages → Custom domain, y un registro CNAME en tu proveedor del `.no`.
 
 ## Reglas
