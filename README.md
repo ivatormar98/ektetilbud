@@ -10,7 +10,7 @@ python pipeline.py                # carga los catálogos, calcula y genera salid
 python test_pipeline.py           # comprobación rápida
 ```
 
-Después abre `salida/index.html` en el navegador.
+Después ejecuta `python serve.py` y abre http://localhost:8772. Sirve las mismas URLs limpias que GitHub Pages (`/om` en vez de `om.html`); abrir el archivo directamente ya no funciona.
 
 `python demo/lag_eksempel.py` genera `salida/eksempel.html`. Es la página de ejemplo que se publica para las tiendas: datos inventados, marcada como «Eksempel», con tiendas anónimas y sin fotos ni enlaces. La portada la enlaza mientras no haya datos reales. Nunca toca `precios.db`.
 
@@ -19,7 +19,8 @@ Después abre `salida/index.html` en el navegador.
 | Archivo | Qué hace |
 |---|---|
 | `pipeline.py` | Carga los catálogos en `precios.db`, calcula los chollos y los descuentos falsos y genera la página |
-| `plantilla.html` | Diseño de la página; el pipeline mete los datos donde pone `/*DATA*/null` |
+| `plantilla.html` | Diseño de la página; el pipeline mete los datos donde pone `/*DATA*/null` (un bloque JSON, sin código) |
+| `salida/app.js`, `salida/lucide.min.js` | Lógica de la página e iconos, servidos desde la propia web: la política CSP solo permite scripts propios. Si se añade GoatCounter, hay que añadir `https://gc.zgo.at` a `script-src` y `https://*.goatcounter.com` a `connect-src` e `img-src` |
 | `test_pipeline.py` | Prueba un chollo real, un descuento falso y filas inválidas |
 | `demo/` | Productos y generador de catálogos inventados. Con catálogos reales no hace falta |
 

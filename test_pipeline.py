@@ -45,7 +45,19 @@ def test_clean_rejects_bad_rows():
     assert p.clean({**ok, "img": "http://insecure"})["img"] == ""
 
 
+def test_build_keeps_data_inside_script():
+    import json
+    with tempfile.TemporaryDirectory() as tmp:
+        out = Path(tmp) / "i.html"
+        p.build({"name": "</script><script>alert(1)</script>"}, out)
+        html = out.read_text(encoding="utf-8")
+        assert "alert(1)</script>" not in html, "data must not be able to close the script block"
+        blob = html.split('id="data">')[1].split("</script>")[0]
+        assert json.loads(blob)["name"].startswith("</script>"), "data must round-trip intact"
+
+
 if __name__ == "__main__":
+    test_build_keeps_data_inside_script()
     test_clean_rejects_bad_rows()
     test_end_to_end()
     print("ok")

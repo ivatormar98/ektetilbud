@@ -177,7 +177,7 @@ def score(db, day=None):
 
 
 def build(data, out):
-    blob = json.dumps(data, ensure_ascii=False).replace("</", "<\\/")
+    blob = json.dumps(data, ensure_ascii=False).replace("<", "\\u003c")  # nothing in the data can close the <script> block
     out = Path(out)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text((HERE / "plantilla.html").read_text(encoding="utf-8").replace("/*DATA*/null", blob), encoding="utf-8")
