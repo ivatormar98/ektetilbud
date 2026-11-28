@@ -99,6 +99,70 @@ function gallery(d) {
   g.append(nav, track, dots, status); return g;
 }
 
+// Price chart: step line of the daily lowest price (feeds: precios.db; hand-picked: our own precios_vistos.csv log), up to a year
+const RANGES = [["1 mnd", 30], ["3 mnd", 91], ["6 mnd", 182], ["1 år", 365]], DAY = 864e5;
+const shortDate = t => new Date(t).toLocaleDateString("nb-NO", {day: "numeric", month: "short"});
+function priceChart(d, low) {
+  const pts = (d.series || []).map(([day, v]) => [Date.parse(day), v]);
+  const end = pts.length ? pts.at(-1)[0] : Date.now(), span = pts.length ? (end - pts[0][0]) / DAY : 0;
+  const refs = d.editor ? [["Vanlig pris", d.ref], ["Laveste 30 dager", low]] : [["Median 90 dager", d.ref]];
+  const box = el("section", "f-sec"), head = el("div", "ch-head"), tabs = el("div", "ch-tabs");
+  tabs.setAttribute("role", "group"); tabs.setAttribute("aria-label", "Periode");
+  head.append(el("h2", null, "Prisutvikling"), tabs);
+  const NS = "http://www.w3.org/2000/svg", W = 360, H = 160, L = 50, R = 6, T = 14, B = 20;  // small viewBox so text stays legible when scaled
+  const svg = document.createElementNS(NS, "svg"), wrap = el("div", "ch-wrap"), tip = el("div", "ch-tip");
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`); svg.setAttribute("class", "ch"); svg.setAttribute("role", "img"); tip.hidden = true;
+  const mk = (tag, attrs) => { const n = document.createElementNS(NS, tag); for (const k in attrs) n.setAttribute(k, attrs[k]); return n; };
+  let view = [], x, y;
+  const draw = days => {
+    tabs.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", String(+b.value === days)));
+    const from = end - days * DAY, before = pts.filter(p => p[0] < from).at(-1);
+    view = [...(before ? [[from, before[1]]] : []), ...pts.filter(p => p[0] >= from)];  // carry the last earlier price to the left edge
+    const vals = [...view.map(p => p[1]), ...refs.map(r => r[1])], pad = (Math.max(...vals) - Math.min(...vals) || Math.max(...vals) * .1) * .15;
+    const lo = Math.min(...vals) - pad, hi = Math.max(...vals) + pad;
+    x = t => L + (t - from) / (end - from) * (W - L - R); y = v => T + (hi - v) / (hi - lo) * (H - T - B);
+    svg.replaceChildren();
+    [hi - pad, (hi + lo) / 2, lo + pad].forEach(v => {
+      svg.append(mk("line", {class: "grid", x1: L, x2: W - R, y1: y(v), y2: y(v)}));
+      const t = mk("text", {x: L - 6, y: y(v) + 4, "text-anchor": "end"}); t.textContent = kr(v); svg.append(t);
+    });
+    refs.forEach(([k, v]) => {
+      svg.append(mk("line", {class: "ref", x1: L, x2: W - R, y1: y(v), y2: y(v)}));
+      const t = mk("text", {class: "ref-t", x: W - R - 12, y: y(v) - 5, "text-anchor": "end"}); t.textContent = k; svg.append(t);  // clear of the "now" dot
+    });
+    if (view.length > 1) {
+      const line = view.map((p, i) => i ? `H${x(p[0]).toFixed(1)}V${y(p[1]).toFixed(1)}` : `M${x(p[0]).toFixed(1)} ${y(p[1]).toFixed(1)}`).join("");
+      svg.append(mk("path", {class: "ar", d: `${line}H${x(end)}V${H - B}H${x(view[0][0])}Z`}), mk("path", {class: "ln", d: `${line}H${x(end)}`}));
+    }
+    const last = view.at(-1);
+    if (last) svg.append(mk("circle", {class: "now", cx: x(end), cy: y(last[1]), r: 5}));
+    [[L, "start", shortDate(from)], [W - R, "end", "I dag"]].forEach(([tx, an, s]) => {
+      const t = mk("text", {x: tx, y: H - 5, "text-anchor": an}); t.textContent = s; svg.append(t);
+    });
+    const vs = view.map(p => p[1]);
+    svg.setAttribute("aria-label", vs.length ? `Laveste pris siden ${shortDate(from)}: ${kr(Math.min(...vs))} til ${kr(Math.max(...vs))}. Nå ${kr(last[1])}.` : "Ingen priser ennå");
+  };
+  RANGES.forEach(([label, days], i) => {
+    const b = el("button", null, label); b.type = "button"; b.value = days;
+    b.disabled = i > 0 && span <= RANGES[i - 1][1];  // only offer a range that shows more than the shorter one
+    b.onclick = () => draw(days); tabs.append(b);
+  });
+  svg.addEventListener("pointermove", e => {  // crosshair + price of that day
+    if (view.length < 1) return;
+    const r = svg.getBoundingClientRect(), sx = (e.clientX - r.left) / r.width * W;
+    if (sx < L || sx > W - R) { tip.hidden = true; svg.querySelector(".xh")?.remove(); return; }
+    const t = view[0][0] + (sx - L) / (W - L - R) * (end - view[0][0]), p = view.filter(q => q[0] <= t).at(-1) || view[0];
+    let xh = svg.querySelector(".xh"); if (!xh) { xh = mk("line", {class: "xh", y1: T, y2: H - B}); svg.append(xh); }
+    xh.setAttribute("x1", sx); xh.setAttribute("x2", sx);
+    tip.hidden = false; tip.textContent = `${shortDate(Math.max(t, view[0][0]))}: ${kr(p[1])}`; tip.style.left = `${sx / W * 100}%`;
+  });
+  svg.addEventListener("pointerleave", () => { tip.hidden = true; svg.querySelector(".xh")?.remove(); });
+  wrap.append(svg, tip); box.append(head, wrap);
+  if (pts.length < 2) box.append(el("p", "ch-note", "Vi har nettopp begynt å logge prisen på dette produktet. Linjen fylles ut etter hvert som vi sjekker prisen."));
+  draw((RANGES.find(([, days]) => days >= span) || RANGES.at(-1))[1]);
+  return box;
+}
+
 function openDeal(d) {
   const info = el("div", "f-info");
   const h = el("h1", null, d.name); h.id = "f-name";
@@ -117,20 +181,7 @@ function openDeal(d) {
   chip(d.editor ? "Vanlig pris" : "Median 90 dager", kr(d.ref));
   if (d.claimed != null) chip("Butikken oppgir", `−${d.claimed} %`, off ? "bad" : null);
   info.append(chips);
-  const hs = el("section", "f-sec");
-  if (!d.editor && d.hist.length > 1) {  // feed deals: the real daily history
-    const rg = el("div", "f-range"); rg.append(el("span", null, `Lavest ${kr(Math.min(...d.hist))}`), el("span", null, `Høyest ${kr(Math.max(...d.hist))}`));
-    hs.append(el("h2", null, `Laveste pris de siste ${d.hist.length} dagene`), spark(d.hist), rg);
-  } else {  // hand-picked deals: only the three prices we checked, shown as levels, not an invented curve
-    const bars = el("dl", "f-bars"), top = Math.max(d.ref, low, d.price);
-    [["Vanlig pris", d.ref, ""], ["Laveste 30 dager", low, ""], ["Nå", d.price, "now"]].forEach(([k, v, cls]) => {
-      const row = el("div", cls); row.style.display = "contents";
-      const bar = el("div", "lvl"), fill = el("i"); fill.style.width = `${(v / top) * 100}%`; bar.append(fill);
-      const dd = el("dd", "track"); dd.append(bar);
-      row.append(el("dt", null, k), dd, el("dd", "val", kr(v))); bars.append(row);
-    });
-    hs.append(el("h2", null, "Prisnivå"), bars);
-  }
+  const hs = priceChart(d, low);
   if (!d.editor && d.stores.length > 1) {
     const st = el("dl", "f-stores"); d.stores.forEach(([s, p]) => st.append(el("dt", null, s), el("dd", null, kr(p)))); hs.append(st);
   }
@@ -150,7 +201,9 @@ function openDeal(d) {
   };
   act.append(sh); info.append(act);
   if (ad && !D.demo) info.append(el("p", "ad", "Reklamelenke"));
-  document.getElementById("f-body").replaceChildren(gallery(d), info);
+  const left = el("div", "f-left"); left.append(gallery(d));
+  if (d.credit) left.append(el("p", "gal-credit", `Foto: ${d.credit}`));
+  document.getElementById("f-body").replaceChildren(left, info);
   sheet.showModal(); icons();
   // focus the main action without scrolling to it (on a phone it sits at the bottom, below the photos)
   (act.querySelector("a") || sheet.querySelector(".x")).focus({preventScroll: true}); sheet.scrollTop = 0;

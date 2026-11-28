@@ -29,7 +29,15 @@ Apunta solo lo que hayas comprobado tú: eres responsable de lo que publicas com
 
 La ficha de cada chollo tiene un carrusel. Sube las fotos a `salida/img/<carpeta-del-chollo>/` (por ejemplo `salida/img/sonos-beam/1.webp`, `2.webp`…): desde el ordenador, o en GitHub con «Add file → Upload files». Luego pon en la columna `imagenes` de `chollos.csv` los archivos separados por `|`: `sonos-beam/1.webp|sonos-beam/2.webp`. También valen URLs `https://` (las fotos que traen los catálogos de afiliado). La columna `nota` añade una frase tuya en noruego a la ficha.
 
-Usa solo fotos que puedas publicar: las de la sala de prensa de la marca, las del catálogo de afiliado o fotos propias. No copies las de la tienda si no eres su afiliado. Al publicar, `fotos.py` reduce cada foto a 1600 px como máximo; los originales del repositorio no cambian. Sin fotos, la ficha muestra el icono de la categoría.
+Pon en la carpeta un `credito.txt`: la primera línea sale bajo el carrusel como «Foto: …» y la segunda guarda el enlace a la fuente. Usa solo fotos que puedas publicar: las de la sala de prensa de la marca, las del catálogo de afiliado o fotos propias. No copies las de la tienda si no eres su afiliado. Al publicar, `fotos.py` reduce cada foto a 1600 px como máximo; los originales del repositorio no cambian. Sin fotos, la ficha muestra el icono de la categoría.
+
+## Historial de precios
+
+La ficha dibuja el precio más bajo de cada día, hasta un año atrás, con vistas de 1 mes, 3 meses, 6 meses y 1 año. Los chollos automáticos usan `precios.db`. Los manuales usan nuestro propio registro, `precios_vistos.csv` (`fecha,producto,tienda,precio`): `nuevo_chollo.py` añade una línea cada vez que guardas un chollo, y puedes añadir más a mano cada vez que vuelvas a mirar un precio. El producto y la tienda tienen que escribirse igual que en `chollos.csv`. No copies series de precios de otras webs.
+
+## Modo claro y oscuro
+
+La web sigue el modo del sistema. El botón sol/luna del menú lo cambia y la elección se guarda en el navegador (localStorage, sin cookies). `salida/tema.js` la aplica antes de pintar la página.
 
 ## Archivos
 

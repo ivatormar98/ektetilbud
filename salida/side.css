@@ -6,11 +6,16 @@
   --hero:#0c1f15;--hero2:#142619;--hero-ink:#edf4ee;--hero-ink2:#afbfb3;--hero-line:rgba(237,244,238,.1);
   --ease:cubic-bezier(.22,1,.36,1);
 }
-@media (prefers-color-scheme:dark){:root{
+@media (prefers-color-scheme:dark){:root:not(:has(> head > meta[name="color-scheme"][content="light"])){
   --bg:#070d08;--card:#0e1610;--raised:#172119;
   --ink:#eaf0eb;--ink2:#aebcb1;--mute:#89968c;--line:rgba(237,244,238,.08);
   --bad:#f3625d;--good:#9ada5e;--focus:#bdf226;--hero:#010803;--hero2:#0e1610;
 }}
+:root:has(> head > meta[name="color-scheme"][content="dark"]){
+  --bg:#070d08;--card:#0e1610;--raised:#172119;
+  --ink:#eaf0eb;--ink2:#aebcb1;--mute:#89968c;--line:rgba(237,244,238,.08);
+  --bad:#f3625d;--good:#9ada5e;--focus:#bdf226;--hero:#010803;--hero2:#0e1610;
+}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 "Sofia Sans",system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
 a{color:inherit}
@@ -56,6 +61,21 @@ footer nav{height:auto;gap:16px}
 @media (max-width:860px){
   .wrap{padding:0 16px}
   nav .links{display:none}
+  .tema{margin-left:auto}
   h1{font-size:42px}
   .intro{padding:24px 0 40px}
 }
+
+/* theme: follows the system unless /tema.js pinned light or dark in <meta name="color-scheme"> */
+:root{color-scheme:light dark}
+:root:has(> head > meta[name="color-scheme"][content="dark"]){color-scheme:dark}
+:root:has(> head > meta[name="color-scheme"][content="light"]){color-scheme:light}
+.tema{margin-left:16px;width:36px;height:36px;border-radius:50%;border:1px solid var(--hero-line);background:none;color:var(--hero-ink2);display:grid;place-items:center;cursor:pointer;transition:color .15s var(--ease),background-color .15s var(--ease)}
+.tema:hover{color:var(--hero-ink);background:var(--hero2)}
+.tema svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.tema .to-light{display:none}
+@media (prefers-color-scheme:dark){:root:not(:has(> head > meta[name="color-scheme"][content="light"])) .tema .to-dark{display:none} :root:not(:has(> head > meta[name="color-scheme"][content="light"])) .tema .to-light{display:inline}}
+:root:has(> head > meta[name="color-scheme"][content="dark"]) .tema .to-dark{display:none}
+:root:has(> head > meta[name="color-scheme"][content="dark"]) .tema .to-light{display:inline}
+nav .links{margin-left:auto}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}

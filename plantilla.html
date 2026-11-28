@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<script src="/tema.js"></script>
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://ivatormar.goatcounter.com; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' https: data:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <title>Ektetilbud – bare tilbud som faktisk er billigere</title>
 <meta name="description" content="Vi sjekker prisene i norske nettbutikker hver dag og viser bare tilbud som faktisk er billigere enn vanlig. Falske rabatter avslører vi.">
@@ -32,12 +34,18 @@
   --shadow:0 1px 2px rgba(0,0,0,.05);--lift:0 8px 24px rgba(12,37,20,.08);
   --ease:cubic-bezier(.22,1,.36,1);
 }
-@media (prefers-color-scheme:dark){:root{
+@media (prefers-color-scheme:dark){:root:not(:has(> head > meta[name="color-scheme"][content="light"])){
   --bg:#070d08;--card:#0e1610;--raised:#172119;--media:#f4f5f7;
   --ink:#eaf0eb;--ink2:#aebcb1;--mute:#89968c;--line:rgba(237,244,238,.08);--line2:rgba(237,244,238,.14);
   --tag-text:#bdf226;--good:#9ada5e;--bad:#f3625d;--focus:#bdf226;
   --hero:#010803;--hero2:#0e1610;--shadow:none;--lift:none;
 }}
+:root:has(> head > meta[name="color-scheme"][content="dark"]){
+  --bg:#070d08;--card:#0e1610;--raised:#172119;--media:#f4f5f7;
+  --ink:#eaf0eb;--ink2:#aebcb1;--mute:#89968c;--line:rgba(237,244,238,.08);--line2:rgba(237,244,238,.14);
+  --tag-text:#bdf226;--good:#9ada5e;--bad:#f3625d;--focus:#bdf226;
+  --hero:#010803;--hero2:#0e1610;--shadow:none;--lift:none;
+}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Sofia Sans",system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
 a{color:inherit}
@@ -143,6 +151,7 @@ footer nav{height:auto;gap:16px}
   .hero-grid{grid-template-columns:1fr;gap:32px;padding:32px 0 48px}
   h1{font-size:44px}
   nav .links{display:none}
+  .tema{margin-left:auto}
   .wrap{padding:0 16px}
 }
 /* deal sheet: native modal <dialog>, frosted glass over the blurred page */
@@ -208,15 +217,26 @@ button.go{width:100%;border:0;font:inherit;font-weight:500;cursor:pointer}
 .f-sec{padding:16px;border-radius:16px;background:color-mix(in srgb,var(--raised) 55%,transparent);border:1px solid var(--line)}
 .f-sec h2{font-size:12px;font-weight:600;color:var(--mute);margin:0 0 10px}
 .f-sec svg.spark{height:96px;margin:0}
-.f-range{display:flex;justify-content:space-between;font-size:12px;color:var(--mute);font-variant-numeric:tabular-nums;margin-top:6px}
-.f-bars{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px 12px;align-items:center;font-size:13px;margin:0}
-.f-bars dt{color:var(--ink2)}
-.f-bars dd{margin:0}
-.f-bars .track{display:flex;align-items:center}
-.f-bars .lvl{width:100%;height:10px;border-radius:5px;background:var(--line)}
-.f-bars .lvl i{display:block;height:100%;border-radius:5px;background:var(--mute);opacity:.6}
-.f-bars .now .lvl i{background:var(--tag);opacity:1}
-.f-bars .val{text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
+.f-left{align-self:start;min-width:0}
+.gal-credit{margin:6px 4px 0;font-size:11px;color:var(--mute)}
+.ch-head{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.ch-head h2{margin:0}
+.ch-tabs{display:flex;gap:2px;padding:2px;border-radius:8px;background:color-mix(in srgb,var(--raised) 75%,transparent)}
+.ch-tabs button{min-height:28px;padding:0 10px;border:0;border-radius:6px;background:none;font:inherit;font-size:12px;color:var(--ink2);cursor:pointer}
+.ch-tabs button[aria-pressed="true"]{background:var(--card);color:var(--ink);font-weight:600;box-shadow:0 0 0 1px var(--line)}
+.ch-tabs button:disabled{opacity:.4;cursor:default}
+.ch-wrap{position:relative}
+.ch{display:block;width:100%;height:auto;overflow:visible;touch-action:pan-y}
+.ch text{font:12px "Sofia Sans",system-ui,sans-serif;fill:var(--mute);font-variant-numeric:tabular-nums}
+.ch .grid{stroke:var(--line)}
+.ch .ref{stroke:var(--mute);stroke-dasharray:4 4;opacity:.75}
+.ch .ref-t{font-size:11px}
+.ch .ar{fill:var(--ink);opacity:.05}
+.ch .ln{fill:none;stroke:var(--ink2);stroke-width:2;stroke-linejoin:round}
+.ch .now{fill:var(--tag);stroke:var(--card);stroke-width:2}
+.ch .xh{stroke:var(--mute);stroke-width:1}
+.ch-tip{position:absolute;top:-6px;transform:translate(-50%,-100%);padding:4px 8px;border-radius:6px;background:var(--ink);color:var(--bg);font-size:12px;white-space:nowrap;pointer-events:none;font-variant-numeric:tabular-nums}
+.ch-note{font-size:12px;color:var(--mute);margin:8px 0 0}
 .f-stores{display:grid;grid-template-columns:1fr auto;gap:6px 16px;margin:10px 0 0;font-size:13px}
 .f-stores dd{margin:0;text-align:right;font-variant-numeric:tabular-nums}
 .f-how{font-size:12px;color:var(--mute);margin:0}
@@ -233,6 +253,19 @@ a.go.primary:hover{background:var(--tag-h);color:var(--tag-ink)}
   .ficha .x{top:20px;right:20px}
   .ficha h1{font-size:23px}
 }
+/* theme: follows the system unless /tema.js pinned light or dark in <meta name="color-scheme"> */
+:root{color-scheme:light dark}
+:root:has(> head > meta[name="color-scheme"][content="dark"]){color-scheme:dark}
+:root:has(> head > meta[name="color-scheme"][content="light"]){color-scheme:light}
+.tema{margin-left:16px;width:36px;height:36px;border-radius:50%;border:1px solid var(--hero-line);background:none;color:var(--hero-ink2);display:grid;place-items:center;cursor:pointer;transition:color .15s var(--ease),background-color .15s var(--ease)}
+.tema:hover{color:var(--hero-ink);background:var(--hero2)}
+.tema svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.tema .to-light{display:none}
+@media (prefers-color-scheme:dark){:root:not(:has(> head > meta[name="color-scheme"][content="light"])) .tema .to-dark{display:none} :root:not(:has(> head > meta[name="color-scheme"][content="light"])) .tema .to-light{display:inline}}
+:root:has(> head > meta[name="color-scheme"][content="dark"]) .tema .to-dark{display:none}
+:root:has(> head > meta[name="color-scheme"][content="dark"]) .tema .to-light{display:inline}
+nav .links{margin-left:auto}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 </style>
 </head>
 <body>
@@ -243,6 +276,7 @@ a.go.primary:hover{background:var(--tag-h);color:var(--tag-ink)}
     <nav aria-label="Hovedmeny">
       <a class="logo" href="/"><span class="mini" aria-hidden="true"></span>Ektetilbud</a>
       <div class="links"><a href="#tilbud">Dagens tilbud</a><a href="#falske">Falske rabatter</a><a href="/black-friday">Rabattguide</a><a href="/om">Om tjenesten</a></div>
+      <button class="tema" type="button" data-tema><span class="to-dark"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg><span class="vh">Bytt til mørkt tema</span></span><span class="to-light"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg><span class="vh">Bytt til lyst tema</span></span></button>
     </nav>
     <div class="hero-grid">
       <div>

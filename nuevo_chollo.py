@@ -38,9 +38,15 @@ def main():
         if new:
             w.writeheader()
         w.writerow(row)
+    log = p.HERE / "precios_vistos.csv"  # every observed price feeds the sheet's price chart
+    with open(log, "a", encoding="utf-8", newline="") as f:
+        w = csv.writer(f, lineterminator="\n")
+        if log.stat().st_size == 0:
+            w.writerow(["fecha", "producto", "tienda", "precio"])
+        w.writerow([row["fecha"], row["producto"], row["tienda"], row["precio"]])
     print("Guardado en chollos.csv.")
     if input("¿Publicar ahora? (s/n): ").strip().lower() == "s":
-        for cmd in (["git", "add", "chollos.csv"], ["git", "commit", "-m", f"Chollo: {e['name'][:60]}"], ["git", "push"]):
+        for cmd in (["git", "add", "chollos.csv", "precios_vistos.csv"], ["git", "commit", "-m", f"Chollo: {e['name'][:60]}"], ["git", "push"]):
             subprocess.run(cmd, cwd=p.HERE, check=True)
         print("Subido. La web se actualiza sola en uno o dos minutos.")
 

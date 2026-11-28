@@ -96,7 +96,21 @@ def test_editor_images():
         (folder / "1.webp").unlink(); folder.rmdir()
 
 
+def test_price_log_series():
+    import datetime as dt
+    with tempfile.TemporaryDirectory() as tmp:
+        c, log = Path(tmp) / "chollos.csv", Path(tmp) / "precios_vistos.csv"
+        with open(c, "w", newline="", encoding="utf-8") as h:
+            w = csv.writer(h); w.writerow(p.EDITOR_COLS)
+            w.writerow(["2026-12-01", "Lydplanke X", "Elkjøp", "https://e.no/x", "3490", "3490", "4990"] + [""] * 8)
+        log.write_text("\n".join(["fecha,producto,tienda,precio", "2026-11-01,Lydplanke X,Elkjøp,4990", "2026-11-01,lydplanke x,elkjøp,4890",
+                                  "2025-01-01,Lydplanke X,Elkjøp,5990", "2026-11-15,Lydplanke X,Power,3000", "bad,Lydplanke X,Elkjøp,1"]), encoding="utf-8")
+        deals, _, errors = p.editor(c, dt.date(2026, 12, 2))
+    assert not errors and deals[0]["series"] == [("2026-11-01", 4890.0), ("2026-12-01", 3490.0)], deals[0]["series"]
+
+
 if __name__ == "__main__":
+    test_price_log_series()
     test_editor_images()
     test_editor_deals()
     test_build_keeps_data_inside_script()

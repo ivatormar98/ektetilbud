@@ -169,7 +169,9 @@ def score(db, day=None):
         deals.append({"name": best["name"], "brand": best["brand"], "cat": categorize(best["cat"], best["name"]), "img": best["img"],
                       "price": best["price"], "store": shop(best["store"]), "url": best["url"], "real": real, "ref": round(ref),
                       "claimed": claimed, "stores": [[shop(o["store"]), o["price"]] for o in offers],
-                      "hist": [v for _, v in past[-60:]] + [best["price"]], "t": temp(real, ref - best["price"], len(offers))})
+                      "hist": [v for _, v in past[-60:]] + [best["price"]], "t": temp(real, ref - best["price"], len(offers)),
+                      "series": [list(r) for r in db.execute("""SELECT day, MIN(price) FROM offer WHERE ean=? AND stock=1 AND day>? AND day<=?
+                                                                 GROUP BY day ORDER BY day""", (ean, shift(day, -365), day))]})
     deals.sort(key=lambda x: -x["t"])
     fakes.sort(key=lambda x: x["real"] - x["claimed"])
     stores = sorted({shop(o["store"]) for offers in today.values() for o in offers})
@@ -220,17 +222,39 @@ def editor_entry(raw):
          "presale": presale, "fake": bool(old and presale and claimed >= MIN_REAL and old > presale * TOLERANCE)}
     e["imgs"], e["missing"] = editor_images(raw)
     e["img"] = e["imgs"][0] if e["imgs"] else ""
+    first = next((u for u in e["imgs"] if u.startswith("/img/")), "")
+    cred = HERE / "salida" / first.lstrip("/").rpartition("/")[0] / "credito.txt" if first else None
+    e["credit"] = cred.read_text(encoding="utf-8").splitlines()[0] if cred and cred.is_file() else ""  # photo credit, shown under the carousel
     if not (e["deal"] or e["fake"]):
         raise ValueError(f"no es un chollo: {price:g} kr frente a un mínimo de 30 días de {low:g} kr y un precio normal de {normal:g} kr "
                          f"(rebaja real {real} %, hace falta {MIN_REAL} %), y el precio anterior que anuncia la tienda no es falso")
     return e
 
 
-def editor(path, today):
+def seen_prices(path, today):
+    """Our own price log (precios_vistos.csv: fecha,producto,tienda,precio) -> {(product, store): {day: lowest price}}, last 365 days."""
+    log = {}
+    if not Path(path).exists():
+        return log
+    with open(path, encoding="utf-8-sig", newline="") as f:
+        for r in csv.DictReader(f):
+            price, day = num(r.get("precio")), (r.get("fecha") or "").strip()
+            try:
+                ok = price and dt.date.fromisoformat(day) <= today and (today - dt.date.fromisoformat(day)).days <= 365
+            except ValueError:
+                continue
+            if ok:
+                points = log.setdefault(((r.get("producto") or "").strip().lower(), (r.get("tienda") or "").strip().lower()), {})
+                points[day] = min(price, points.get(day, price))
+    return log
+
+
+def editor(path, today, log_path=None):
     """Hand-picked deals and fake discounts from chollos.csv that are live today, plus a list of rejected lines."""
     deals, fakes, errors = [], [], []
     if not Path(path).exists():
         return deals, fakes, errors
+    log = seen_prices(log_path or Path(path).with_name("precios_vistos.csv"), today)
     with open(path, encoding="utf-8-sig", newline="") as f:
         for n, raw in enumerate(csv.DictReader(f), start=2):
             try:
@@ -243,8 +267,9 @@ def editor(path, today):
             if not e["day"] <= today <= e["until"]:
                 continue
             if e["deal"]:
-                deals.append({k: e[k] for k in ("name", "cat", "img", "imgs", "note", "price", "store", "url", "real", "ref", "claimed", "low", "aff")}
+                deals.append({k: e[k] for k in ("name", "cat", "img", "imgs", "credit", "note", "price", "store", "url", "real", "ref", "claimed", "low", "aff")}
                              | {"brand": "", "editor": True, "stores": [[e["store"], e["price"]]], "hist": [],
+                                "series": sorted({**log.get((e["name"].lower(), e["store"].lower()), {}), e["day"].isoformat(): e["price"]}.items()),
                                 "t": temp(e["real"], e["ref"] - e["price"], 1)})
             if e["fake"]:
                 fakes.append({"name": e["name"], "img": e["img"], "cat": e["cat"], "store": e["store"], "price": e["price"], "old": e["old"],
