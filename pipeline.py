@@ -3,7 +3,7 @@
 Usage:  python pipeline.py [feeds_dir] [out.html]        defaults: feeds/  salida/index.html   (history in precios.db)
 Feeds:  feeds/<YYYY-MM-DD>/<store>.xml  (Adtraction format)  or  <store>.csv  (Awin format). One folder per day.
 Run it once a day after downloading the day's feeds; already loaded (day, store) files are skipped."""
-import csv, datetime as dt, json, math, re, sqlite3, statistics, sys, xml.etree.ElementTree as ET
+import csv, datetime as dt, hashlib, json, math, re, sqlite3, statistics, sys, xml.etree.ElementTree as ET
 from pathlib import Path
 
 HERE = Path(__file__).parent
@@ -238,7 +238,9 @@ def build(data, out):
     blob = json.dumps(data, ensure_ascii=False).replace("<", "\\u003c")  # nothing in the data can close the <script> block
     out = Path(out)
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text((HERE / "plantilla.html").read_text(encoding="utf-8").replace("/*DATA*/null", blob), encoding="utf-8")
+    v = hashlib.sha256((HERE / "salida" / "app.js").read_bytes()).hexdigest()[:8]  # new app.js -> new URL, so no stale cached copy
+    html = (HERE / "plantilla.html").read_text(encoding="utf-8").replace('src="/app.js"', f'src="/app.js?v={v}"')
+    out.write_text(html.replace("/*DATA*/null", blob), encoding="utf-8")
 
 
 def main():
