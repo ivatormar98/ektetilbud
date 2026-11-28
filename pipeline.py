@@ -22,7 +22,7 @@ FIELDS = {
 # Store category / product name (Norwegian) -> our category. First match wins.
 CATS = [(r"iphone|galaxy [saz]\d|mobiltelefon|nettbrett|lesebrett|pixel \d", "Mobil og nettbrett"),
         (r"robotstøvsuger|støvsuger|mopp|dampvasker", "Rengjøring"),
-        (r"smartklokke|pulsklokke|aktivitetsmåler|løpesko|sykkel|ski\b", "Sport og trening"),
+        (r"smartklokke|sportsklokke|pulsklokke|aktivitetsmåler|løpesko|sykkel|ski\b", "Sport og trening"),
         (r"hodetelefon|høyttaler|lydplanke|ørepropp", "Lyd"), (r"^tv$|\btv\b|projektor", "TV"),
         (r"pc-skjerm|skjerm|tastatur|\bmus\b|pekeenhet|skriver|router|ssd|laptop", "Data"),
         (r"playstation|nintendo|konsoll|håndkontroll|lego|spill", "Gaming og leker"),
