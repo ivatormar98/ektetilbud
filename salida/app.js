@@ -46,14 +46,64 @@ function card(d) {
   if (d.claimed != null && Math.abs(d.claimed - d.real) >= 5) b.append(el("div", "warn", `Butikken oppgir −${d.claimed} %`));
   if (d.editor) b.append(el("div", "stores", `Laveste pris siste 30 dager: ${kr(d.low)}`));
   else b.append(spark(d.hist), el("div", "stores", d.stores.map(([s, p]) => `${s} ${kr(p)}`).join(" · ")));
-  if (D.demo) b.append(el("span", "go", "Eksempel – ingen lenke"));
-  else {
-    const ad = !d.editor || d.aff;  // feed links are always affiliate links; hand-picked ones say so in chollos.csv
-    const a = el("a", "go", `Se hos ${d.store}`); a.href = d.url; a.target = "_blank"; a.rel = ad ? "sponsored noopener" : "noopener";
-    a.append(icon("arrow-up-right")); b.append(a);
-    if (ad) b.append(el("div", "ad", "Reklamelenke"));
-  }
+  const o = el("button", "go open", "Se prissjekk"); o.type = "button";
+  o.setAttribute("aria-label", `Se prissjekk: ${d.name}`); o.onclick = () => openDeal(d);
+  o.append(icon("chevron-right")); b.append(o);
   c.append(m, b); return c;
+}
+
+// Deal sheet: native modal <dialog>; the browser handles focus, Esc and returning focus to the card.
+const sheet = document.getElementById("ficha");
+const slug = d => `${d.name}-${d.store}`.toLowerCase().replace(/æ/g, "ae").replace(/ø/g, "o").replace(/å/g, "a")
+  .normalize("NFKD").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 90);
+
+function openDeal(d) {
+  const f = document.getElementById("f-body"), m = media(d.img, d.cat);
+  m.classList.add("big"); m.append(el("span", "tag", `−${d.real} %`));
+  const h = el("h1", null, d.name); h.id = "f-name";
+  const pr = el("div", "prices"); pr.append(el("span", "price", kr(d.price)), el("span", "was", kr(d.ref)));
+  const check = el("section", "f-sec"), dl = el("dl", "f-check");
+  const row = (k, v, cls) => dl.append(el("dt", null, k), el("dd", cls, v));
+  row("Ekte rabatt", `−${d.real} %`, "good");
+  row(d.editor ? "Vanlig pris" : "Medianpris siste 90 dager", kr(d.ref));
+  row("Laveste pris siste 30 dager", kr(d.editor ? d.low : Math.min(...d.hist.slice(-31))));
+  if (d.claimed != null) row("Butikken oppgir", `−${d.claimed} %`, Math.abs(d.claimed - d.real) >= 5 ? "bad" : null);
+  check.append(el("h2", null, "Prissjekk"), dl);
+  const parts = [m, h, el("p", "f-meta", `${d.cat} · ${d.editor ? `Hos ${d.store}` : `Billigst hos ${d.store}`}`), pr, check];
+  if (!d.editor && d.hist.length > 1) {
+    const hs = el("section", "f-sec"); hs.append(el("h2", null, "Laveste pris de siste dagene"), spark(d.hist)); parts.push(hs);
+  }
+  if (!d.editor && d.stores.length > 1) {
+    const st = el("section", "f-sec"), sl = el("dl", "f-check");
+    d.stores.forEach(([s, p]) => sl.append(el("dt", null, s), el("dd", null, kr(p))));
+    st.append(el("h2", null, "Pris i butikkene"), sl); parts.push(st);
+  }
+  parts.push(el("p", "f-how", d.editor
+    ? "Funnet og sjekket for hånd av redaksjonen: prisen er minst 10 % under vanlig pris og ikke høyere enn den laveste prisen i butikken de siste 30 dagene."
+    : "Beregnet fra daglige priser: prisen er minst 10 % under medianen de siste 90 dagene og den laveste prisen den siste måneden."));
+  const act = el("div", "f-act"), ad = !d.editor || d.aff;  // feed links are always affiliate links; hand-picked ones say so in chollos.csv
+  if (D.demo) act.append(el("span", "go", "Eksempel – ingen lenke"));
+  else {
+    const a = el("a", "go primary", `Gå til ${d.store}`); a.href = d.url; a.target = "_blank"; a.rel = ad ? "sponsored noopener" : "noopener";
+    a.autofocus = true; a.append(icon("arrow-up-right")); act.append(a);
+  }
+  const url = `${location.origin}${location.pathname}#${slug(d)}`, sh = el("button", "go share", "Del"); sh.type = "button";
+  sh.onclick = async () => {
+    try { if (navigator.share) await navigator.share({title: d.name, url}); else { await navigator.clipboard.writeText(url); sh.textContent = "Lenke kopiert"; } }
+    catch { /* the user closed the share sheet */ }
+  };
+  act.append(sh); parts.push(act);
+  if (ad && !D.demo) parts.push(el("p", "ad", "Reklamelenke"));
+  f.replaceChildren(...parts);
+  sheet.showModal(); icons();
+  history.replaceState(null, "", `#${slug(d)}`);  // shareable link that opens this sheet
+}
+sheet.addEventListener("close", () => history.replaceState(null, "", location.pathname + location.search));
+if (!("closedBy" in HTMLDialogElement.prototype)) {  // Safari: light dismiss without closedby
+  const outside = e => { const r = sheet.getBoundingClientRect(); return e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom; };
+  let down = false;
+  sheet.addEventListener("pointerdown", e => { down = outside(e); });
+  sheet.addEventListener("pointerup", e => { if (down && outside(e)) sheet.close(); });
 }
 
 function render() {
@@ -95,3 +145,5 @@ D.fakes.forEach(f => {
 });
 if (!D.fakes.length) { const tr = el("tr"), td = el("td", "mute", "Ingen i dag."); td.colSpan = 5; tr.append(td); fb.append(tr); }
 render();
+const linked = D.deals.find(d => slug(d) === decodeURIComponent(location.hash.slice(1)));
+if (linked) openDeal(linked);
