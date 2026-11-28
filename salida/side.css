@@ -1,34 +1,36 @@
 /* Shared look for the text pages (guide, om, personvern); same tokens as plantilla.html */
 :root{
-  --bg:#f5f7fa;--card:#fff;--raised:#eceff4;
-  --ink:#111827;--ink2:#4b5565;--mute:#6b7487;--line:rgba(17,24,39,.08);
-  --tag:#ffc83d;--tag-ink:#111827;--bad:#dc2626;--good:#16a34a;
-  --hero:#0e1220;--hero2:#161b2b;--hero-ink:#eef0f5;--hero-ink2:#a3a9b8;--hero-line:rgba(238,240,245,.1);
+  --bg:#f3f8f4;--card:#fff;--raised:#e7efe9;
+  --ink:#0c2514;--ink2:#46584a;--mute:#5f6d62;--line:rgba(12,37,20,.08);
+  --tag:#bdf226;--tag-ink:#0c2a1b;--bad:#cc2827;--good:#27762f;--focus:#0c2514;
+  --hero:#0c1f15;--hero2:#142619;--hero-ink:#edf4ee;--hero-ink2:#afbfb3;--hero-line:rgba(237,244,238,.1);
   --ease:cubic-bezier(.22,1,.36,1);
 }
 @media (prefers-color-scheme:dark){:root{
-  --bg:#0b0d14;--card:#11141c;--raised:#1a1e28;
-  --ink:#eef0f5;--ink2:#a3a9b8;--mute:#7a8296;--line:rgba(238,240,245,.08);
-  --bad:#e5484d;--good:#4cc38a;--hero:#070910;--hero2:#11141c;
+  --bg:#070d08;--card:#0e1610;--raised:#172119;
+  --ink:#eaf0eb;--ink2:#aebcb1;--mute:#89968c;--line:rgba(237,244,238,.08);
+  --bad:#f3625d;--good:#9ada5e;--focus:#bdf226;--hero:#010803;--hero2:#0e1610;
 }}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 "Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 "Sofia Sans",system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
 a{color:inherit}
-:focus-visible{outline:2px solid var(--tag);outline-offset:2px;border-radius:6px}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:6px}
+.hero :focus-visible,figure :focus-visible{outline-color:var(--tag)}
 .wrap{max-width:1200px;margin:0 auto;padding:0 24px}
 .hero{background:var(--hero);color:var(--hero-ink)}
 nav{display:flex;align-items:center;justify-content:space-between;height:64px}
-.logo{display:flex;align-items:center;gap:8px;font-weight:600;font-size:17px;text-decoration:none}
-.logo .mini{width:20px;height:12px;background:var(--tag);clip-path:polygon(5px 0,100% 0,100% 100%,5px 100%,0 50%);border-radius:0 3px 3px 0}
+.logo{display:flex;align-items:center;gap:8px;font:800 19px/1 "Sofia Sans Condensed","Sofia Sans",system-ui,sans-serif;letter-spacing:.01em;text-transform:uppercase;text-decoration:none}
+/* the price-drop step from the brand kit (branding/kit-gront-lys/logo/master-symbol.svg) */
+.logo .mini{width:22px;height:15px;background:var(--tag);-webkit-mask:var(--step) center/contain no-repeat;mask:var(--step) center/contain no-repeat;--step:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='6 22 89 61'%3E%3Cpath d='M6 22L50 22L50 62L71.752 62C74.132 58.956 77.837 57 82 57C89.18 57 95 62.82 95 70C95 77.18 89.18 83 82 83C77.837 83 74.132 81.044 71.752 78L34 78L34 38L6 38Z'/%3E%3C/svg%3E")}
 nav .links{display:flex;gap:24px;font-size:14px;color:var(--hero-ink2)}
 nav .links a{text-decoration:none;transition:color .15s var(--ease)}
 nav .links a:hover,nav .links a[aria-current]{color:var(--hero-ink)}
 .intro{max-width:720px;padding:40px 0 56px}
 .kicker{font-size:13px;color:var(--hero-ink2);margin:0 0 12px}
-h1{font:400 52px/1.06 "Instrument Serif",Georgia,serif;letter-spacing:-.02em;margin:0}
+h1{font:800 56px/.98 "Sofia Sans Condensed","Sofia Sans",system-ui,sans-serif;letter-spacing:.005em;text-transform:uppercase;margin:0}
 .intro .lead{font-size:18px;line-height:28px;color:var(--hero-ink2);margin:20px 0 0}
 article{max-width:720px;padding:48px 0 64px}
-article h2{font:400 30px/1.2 "Instrument Serif",Georgia,serif;margin:48px 0 12px}
+article h2{font:800 30px/1.08 "Sofia Sans Condensed","Sofia Sans",system-ui,sans-serif;letter-spacing:.01em;text-transform:uppercase;margin:48px 0 12px}
 article h2:first-child{margin-top:0}
 article h3{font-size:17px;font-weight:600;margin:24px 0 4px}
 article p,article li{color:var(--ink2)}
@@ -54,6 +56,6 @@ footer nav{height:auto;gap:16px}
 @media (max-width:860px){
   .wrap{padding:0 16px}
   nav .links{display:none}
-  h1{font-size:38px}
+  h1{font-size:42px}
   .intro{padding:24px 0 40px}
 }
