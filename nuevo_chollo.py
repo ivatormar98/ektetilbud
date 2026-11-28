@@ -12,7 +12,9 @@ ASK = [("fecha", "Fecha (AAAA-MM-DD, Enter = hoy)"), ("producto", "Producto"), (
        ("precio_antes", "Precio anterior que anuncia la tienda, si anuncia rebaja (kr, opcional)"),
        ("categoria", "Categoría (Enter = automática)"), ("imagen", "URL de la imagen (opcional)"),
        ("afiliado", "¿Es un enlace de afiliado? (si/no)"), ("hasta", "Visible hasta (AAAA-MM-DD, Enter = 2 días)"),
-       ("minimo_antes_oferta", "Precio más bajo en esa tienda en los 30 días ANTES de empezar la oferta (kr, opcional; solo si lo has visto)")]
+       ("minimo_antes_oferta", "Precio más bajo en esa tienda en los 30 días ANTES de empezar la oferta (kr, opcional; solo si lo has visto)"),
+       ("imagenes", "Fotos para el carrusel, separadas por | (archivos en salida/img/, p. ej. sonos-beam/1.webp, o URLs https; opcional)"),
+       ("nota", "Nota de la redacción, una frase en noruego (opcional)")]
 
 
 def main():
@@ -26,6 +28,8 @@ def main():
     if e["claimed"] is not None:
         print(f"La tienda anuncia −{e['claimed']} % desde {e['old']:g} kr" + (" → DESCUENTO FALSO: ese precio anterior es más alto que el mínimo de los 30 días antes de la oferta." if e["fake"] else "."))
     print("Saldrá como chollo." if e["deal"] else "Saldrá solo en la tabla de descuentos falsos.")
+    if e["missing"]:
+        print(f"Ojo: no encuentro estas fotos en salida/img/: {', '.join(e['missing'])}")
     if input("\n¿Guardar? (s/n): ").strip().lower() != "s":
         return
     new = not CSV.exists() or CSV.stat().st_size == 0

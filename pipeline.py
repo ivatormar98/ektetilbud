@@ -177,7 +177,21 @@ def score(db, day=None):
 
 
 EDITOR_COLS = ["fecha", "producto", "tienda", "enlace", "precio", "minimo_30d", "precio_normal", "precio_antes",
-               "categoria", "imagen", "afiliado", "hasta", "minimo_antes_oferta"]
+               "categoria", "imagen", "afiliado", "hasta", "minimo_antes_oferta", "imagenes", "nota"]
+
+
+def editor_images(raw):
+    """Photos for the sheet's carousel: https URLs, or files under salida/img/ (e.g. sonos-beam/1.webp). Returns (urls, missing)."""
+    urls, missing = [], []
+    items = [raw.get("imagen") or ""] + (raw.get("imagenes") or "").split("|")
+    for item in filter(None, (x.strip() for x in items)):
+        if item.startswith("https://"):
+            urls.append(item)
+        elif ".." not in item and re.fullmatch(r"[\w-]+(/[\w.-]+)*\.(webp|jpe?g|png|avif)", item, re.I) and (HERE / "salida" / "img" / item).is_file():
+            urls.append("/img/" + item)
+        else:
+            missing.append(item)
+    return urls, missing
 
 
 def editor_entry(raw):
@@ -201,9 +215,11 @@ def editor_entry(raw):
     claimed = round((old - price) / old * 100) if old else None
     e = {"day": day, "until": until, "name": name, "store": store, "url": url, "price": price, "low": low, "ref": round(normal),
          "old": old, "real": real, "claimed": claimed, "cat": g("categoria") if g("categoria") in cats else categorize("", name),
-         "img": g("imagen") if g("imagen").startswith("https://") else "", "aff": g("afiliado").lower() in {"si", "sí", "ja", "yes", "1"},
+         "aff": g("afiliado").lower() in {"si", "sí", "ja", "yes", "1"}, "note": g("nota")[:280],
          "deal": price <= low and real >= MIN_REAL,
          "presale": presale, "fake": bool(old and presale and claimed >= MIN_REAL and old > presale * TOLERANCE)}
+    e["imgs"], e["missing"] = editor_images(raw)
+    e["img"] = e["imgs"][0] if e["imgs"] else ""
     if not (e["deal"] or e["fake"]):
         raise ValueError(f"no es un chollo: {price:g} kr frente a un mínimo de 30 días de {low:g} kr y un precio normal de {normal:g} kr "
                          f"(rebaja real {real} %, hace falta {MIN_REAL} %), y el precio anterior que anuncia la tienda no es falso")
@@ -222,10 +238,12 @@ def editor(path, today):
             except ValueError as x:
                 errors.append(f"línea {n}: {x}")
                 continue
+            if e["missing"]:
+                errors.append(f"línea {n}: imagen no encontrada en salida/img/: {', '.join(e['missing'])}")
             if not e["day"] <= today <= e["until"]:
                 continue
             if e["deal"]:
-                deals.append({k: e[k] for k in ("name", "cat", "img", "price", "store", "url", "real", "ref", "claimed", "low", "aff")}
+                deals.append({k: e[k] for k in ("name", "cat", "img", "imgs", "note", "price", "store", "url", "real", "ref", "claimed", "low", "aff")}
                              | {"brand": "", "editor": True, "stores": [[e["store"], e["price"]]], "hist": [],
                                 "t": temp(e["real"], e["ref"] - e["price"], 1)})
             if e["fake"]:

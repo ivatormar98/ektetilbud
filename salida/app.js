@@ -57,45 +57,103 @@ const sheet = document.getElementById("ficha");
 const slug = d => `${d.name}-${d.store}`.toLowerCase().replace(/æ/g, "ae").replace(/ø/g, "o").replace(/å/g, "a")
   .normalize("NFKD").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 90);
 
+// Photo carousel: native scroll snap; the buttons and dots only steer the track (finite: a product has a handful of photos)
+function gallery(d) {
+  const imgs = d.imgs?.length ? d.imgs : d.img ? [d.img] : [];
+  const g = el("section", "gal");
+  if (!imgs.length) { const m = media("", d.cat); m.classList.add("big"); g.append(m); return g; }
+  g.setAttribute("aria-roledescription", "karusell"); g.setAttribute("aria-label", `Bilder av ${d.name}`);
+  const track = el("div", "gal-track"); track.tabIndex = 0; track.setAttribute("role", "group"); track.setAttribute("aria-label", "Bilder");
+  imgs.forEach((src, i) => {
+    const sl = el("div", "gal-slide"), im = el("img");
+    sl.setAttribute("role", "group"); sl.setAttribute("aria-roledescription", "bilde"); sl.setAttribute("aria-label", `${i + 1} av ${imgs.length}`);
+    im.src = src; im.alt = i ? "" : d.name; im.loading = i ? "lazy" : "eager"; im.decoding = "async";
+    sl.append(im); track.append(sl);
+  });
+  if (imgs.length < 2) { g.append(track); return g; }
+  const nav = el("div", "gal-nav"), prev = el("button"), next = el("button"), dots = el("nav", "gal-dots"), status = el("p", "vh");
+  prev.type = next.type = "button"; prev.setAttribute("aria-label", "Forrige bilde"); next.setAttribute("aria-label", "Neste bilde");
+  prev.append(icon("chevron-left")); next.append(icon("chevron-right")); nav.append(prev, next);
+  dots.setAttribute("aria-label", "Velg bilde"); status.setAttribute("role", "status"); status.setAttribute("aria-live", "polite");
+  const marks = imgs.map((_, i) => { const m = el("button"); m.type = "button"; m.setAttribute("aria-label", `Gå til bilde ${i + 1}`); m.onclick = () => go(i); return m; });
+  dots.append(...marks);
+  let pending = null, settled = 0, frame = 0;
+  const at = () => Math.round(track.scrollLeft / track.clientWidth);
+  const mark = i => marks.forEach((m, j) => m.setAttribute("aria-current", String(i === j)));
+  const go = i => { pending = Math.max(0, Math.min(imgs.length - 1, i)); mark(pending); track.scrollTo({left: pending * track.clientWidth}); };
+  prev.onclick = () => go((pending ?? at()) - 1); next.onclick = () => go((pending ?? at()) + 1);
+  const settle = () => {
+    pending = null; const i = at(); mark(i);
+    const focused = document.activeElement;
+    prev.disabled = i === 0; next.disabled = i === imgs.length - 1;
+    if (focused === prev && prev.disabled) next.focus(); else if (focused === next && next.disabled) prev.focus();  // don't drop focus
+    if (i !== settled) { settled = i; status.textContent = `Bilde ${i + 1} av ${imgs.length}`; }
+  };
+  track.addEventListener("scroll", () => {
+    if (pending !== null || frame) return;
+    frame = requestAnimationFrame(() => { frame = 0; mark(at()); });
+  }, {passive: true});
+  if ("onscrollend" in window) track.addEventListener("scrollend", settle);
+  else { let t; track.addEventListener("scroll", () => { clearTimeout(t); t = setTimeout(settle, 120); }, {passive: true}); }
+  mark(0); prev.disabled = true;
+  g.append(nav, track, dots, status); return g;
+}
+
 function openDeal(d) {
-  const f = document.getElementById("f-body"), m = media(d.img, d.cat);
-  m.classList.add("big"); m.append(el("span", "tag", `−${d.real} %`));
+  const info = el("div", "f-info");
   const h = el("h1", null, d.name); h.id = "f-name";
-  const pr = el("div", "prices"); pr.append(el("span", "price", kr(d.price)), el("span", "was", kr(d.ref)));
-  const check = el("section", "f-sec"), dl = el("dl", "f-check");
-  const row = (k, v, cls) => dl.append(el("dt", null, k), el("dd", cls, v));
-  row("Ekte rabatt", `−${d.real} %`, "good");
-  row(d.editor ? "Vanlig pris" : "Medianpris siste 90 dager", kr(d.ref));
-  row("Laveste pris siste 30 dager", kr(d.editor ? d.low : Math.min(...d.hist.slice(-31))));
-  if (d.claimed != null) row("Butikken oppgir", `−${d.claimed} %`, Math.abs(d.claimed - d.real) >= 5 ? "bad" : null);
-  check.append(el("h2", null, "Prissjekk"), dl);
-  const parts = [m, h, el("p", "f-meta", `${d.cat} · ${d.editor ? `Hos ${d.store}` : `Billigst hos ${d.store}`}`), pr, check];
-  if (!d.editor && d.hist.length > 1) {
-    const hs = el("section", "f-sec"); hs.append(el("h2", null, "Laveste pris de siste dagene"), spark(d.hist)); parts.push(hs);
+  const head = el("div"); head.append(h, el("p", "f-meta", `${d.cat} · ${d.editor ? `Hos ${d.store}` : `Billigst hos ${d.store}`}`));
+  const pr = el("div", "f-price"); pr.append(el("span", "price", kr(d.price)), el("span", "was", kr(d.ref)), el("span", "tag inline", `−${d.real} %`));
+  const low = d.editor ? d.low : Math.min(...d.hist.slice(-31));
+  let desc = d.editor
+    ? `Vanligvis ${kr(d.ref)}. Nå ${d.real} % billigere${d.price <= low ? ", og den laveste prisen i butikken de siste 30 dagene" : ""}.`
+    : `Medianprisen de siste 90 dagene er ${kr(d.ref)}. Nå ${d.real} % lavere, og den laveste prisen den siste måneden.`;
+  const off = d.claimed != null && Math.abs(d.claimed - d.real) >= 5;
+  if (off) desc += ` Butikken oppgir −${d.claimed} %, men regnet mot vanlig pris er rabatten ${d.real} %.`;
+  info.append(head, pr, el("p", "f-desc", desc));
+  if (d.note) { const n = el("p", "f-note"); n.append(el("b", null, "Redaksjonen: "), d.note); info.append(n); }
+  const chips = el("dl", "f-chips"), chip = (k, v, cls) => { const c = el("div", cls); c.append(el("dt", null, k), el("dd", null, v)); chips.append(c); };
+  chip("Ekte rabatt", `−${d.real} %`, "good");
+  chip(d.editor ? "Vanlig pris" : "Median 90 dager", kr(d.ref));
+  if (d.claimed != null) chip("Butikken oppgir", `−${d.claimed} %`, off ? "bad" : null);
+  info.append(chips);
+  const hs = el("section", "f-sec");
+  if (!d.editor && d.hist.length > 1) {  // feed deals: the real daily history
+    const rg = el("div", "f-range"); rg.append(el("span", null, `Lavest ${kr(Math.min(...d.hist))}`), el("span", null, `Høyest ${kr(Math.max(...d.hist))}`));
+    hs.append(el("h2", null, `Laveste pris de siste ${d.hist.length} dagene`), spark(d.hist), rg);
+  } else {  // hand-picked deals: only the three prices we checked, shown as levels, not an invented curve
+    const bars = el("dl", "f-bars"), top = Math.max(d.ref, low, d.price);
+    [["Vanlig pris", d.ref, ""], ["Laveste 30 dager", low, ""], ["Nå", d.price, "now"]].forEach(([k, v, cls]) => {
+      const row = el("div", cls); row.style.display = "contents";
+      const bar = el("div", "lvl"), fill = el("i"); fill.style.width = `${(v / top) * 100}%`; bar.append(fill);
+      const dd = el("dd", "track"); dd.append(bar);
+      row.append(el("dt", null, k), dd, el("dd", "val", kr(v))); bars.append(row);
+    });
+    hs.append(el("h2", null, "Prisnivå"), bars);
   }
   if (!d.editor && d.stores.length > 1) {
-    const st = el("section", "f-sec"), sl = el("dl", "f-check");
-    d.stores.forEach(([s, p]) => sl.append(el("dt", null, s), el("dd", null, kr(p))));
-    st.append(el("h2", null, "Pris i butikkene"), sl); parts.push(st);
+    const st = el("dl", "f-stores"); d.stores.forEach(([s, p]) => st.append(el("dt", null, s), el("dd", null, kr(p)))); hs.append(st);
   }
-  parts.push(el("p", "f-how", d.editor
-    ? "Funnet og sjekket for hånd av redaksjonen: prisen er minst 10 % under vanlig pris og ikke høyere enn den laveste prisen i butikken de siste 30 dagene."
-    : "Beregnet fra daglige priser: prisen er minst 10 % under medianen de siste 90 dagene og den laveste prisen den siste måneden."));
+  info.append(hs, el("p", "f-how", d.editor
+    ? "Funnet og sjekket for hånd av redaksjonen: minst 10 % under vanlig pris og ikke høyere enn den laveste prisen i butikken de siste 30 dagene."
+    : "Beregnet fra daglige priser: minst 10 % under medianen de siste 90 dagene og den laveste prisen den siste måneden."));
   const act = el("div", "f-act"), ad = !d.editor || d.aff;  // feed links are always affiliate links; hand-picked ones say so in chollos.csv
   if (D.demo) act.append(el("span", "go", "Eksempel – ingen lenke"));
   else {
     const a = el("a", "go primary", `Gå til ${d.store}`); a.href = d.url; a.target = "_blank"; a.rel = ad ? "sponsored noopener" : "noopener";
-    a.autofocus = true; a.append(icon("arrow-up-right")); act.append(a);
+    a.append(icon("arrow-up-right")); act.append(a);
   }
   const url = `${location.origin}${location.pathname}#${slug(d)}`, sh = el("button", "go share", "Del"); sh.type = "button";
   sh.onclick = async () => {
     try { if (navigator.share) await navigator.share({title: d.name, url}); else { await navigator.clipboard.writeText(url); sh.textContent = "Lenke kopiert"; } }
     catch { /* the user closed the share sheet */ }
   };
-  act.append(sh); parts.push(act);
-  if (ad && !D.demo) parts.push(el("p", "ad", "Reklamelenke"));
-  f.replaceChildren(...parts);
+  act.append(sh); info.append(act);
+  if (ad && !D.demo) info.append(el("p", "ad", "Reklamelenke"));
+  document.getElementById("f-body").replaceChildren(gallery(d), info);
   sheet.showModal(); icons();
+  // focus the main action without scrolling to it (on a phone it sits at the bottom, below the photos)
+  (act.querySelector("a") || sheet.querySelector(".x")).focus({preventScroll: true}); sheet.scrollTop = 0;
   history.replaceState(null, "", `#${slug(d)}`);  // shareable link that opens this sheet
 }
 sheet.addEventListener("close", () => history.replaceState(null, "", location.pathname + location.search));

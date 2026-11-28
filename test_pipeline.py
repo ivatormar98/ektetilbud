@@ -84,7 +84,20 @@ def test_editor_deals():
     assert len(errors) == 2 and "línea 3" in errors[0] and "línea 7" in errors[1], errors
 
 
+def test_editor_images():
+    folder = p.HERE / "salida" / "img" / "_test"
+    folder.mkdir(parents=True, exist_ok=True)
+    (folder / "1.webp").write_bytes(b"x")
+    try:
+        urls, missing = p.editor_images({"imagen": "", "imagenes": "_test/1.webp | https://cdn.example/a.jpg | _test/nope.webp | _test/../../pipeline.py | ../x.png"})
+        assert urls == ["/img/_test/1.webp", "https://cdn.example/a.jpg"], urls
+        assert missing == ["_test/nope.webp", "_test/../../pipeline.py", "../x.png"], missing
+    finally:
+        (folder / "1.webp").unlink(); folder.rmdir()
+
+
 if __name__ == "__main__":
+    test_editor_images()
     test_editor_deals()
     test_build_keeps_data_inside_script()
     test_clean_rejects_bad_rows()

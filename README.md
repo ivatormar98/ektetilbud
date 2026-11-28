@@ -25,6 +25,12 @@ Columnas: `fecha` (AAAA-MM-DD), `producto`, `tienda`, `enlace` (https), `precio`
 
 Apunta solo lo que hayas comprobado tú: eres responsable de lo que publicas como redacción.
 
+## Fotos
+
+La ficha de cada chollo tiene un carrusel. Sube las fotos a `salida/img/<carpeta-del-chollo>/` (por ejemplo `salida/img/sonos-beam/1.webp`, `2.webp`…): desde el ordenador, o en GitHub con «Add file → Upload files». Luego pon en la columna `imagenes` de `chollos.csv` los archivos separados por `|`: `sonos-beam/1.webp|sonos-beam/2.webp`. También valen URLs `https://` (las fotos que traen los catálogos de afiliado). La columna `nota` añade una frase tuya en noruego a la ficha.
+
+Usa solo fotos que puedas publicar: las de la sala de prensa de la marca, las del catálogo de afiliado o fotos propias. No copies las de la tienda si no eres su afiliado. Al publicar, `fotos.py` reduce cada foto a 1600 px como máximo; los originales del repositorio no cambian. Sin fotos, la ficha muestra el icono de la categoría.
+
 ## Archivos
 
 | Archivo | Qué hace |

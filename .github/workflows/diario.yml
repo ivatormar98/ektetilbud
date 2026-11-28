@@ -33,6 +33,7 @@ jobs:
         run: python descargar_feeds.py
         env:   # add one line per store in fuentes.json
           FEED_KOMPLETT: ${{ secrets.FEED_KOMPLETT }}
+      - run: pip install --quiet pillow && python fotos.py   # shrink carousel photos in the published copy
       - run: python pipeline.py
       # shortcut: the price history lives in the repo as one SQLite file; move it to a database or release asset once it passes ~50 MB.
       - name: Lagre prishistorikk
