@@ -11,7 +11,8 @@ ASK = [("fecha", "Fecha (AAAA-MM-DD, Enter = hoy)"), ("producto", "Producto"), (
        ("precio_normal", "Precio normal, el más habitual los últimos meses (kr, Enter = el mínimo de 30 días)"),
        ("precio_antes", "Precio anterior que anuncia la tienda, si anuncia rebaja (kr, opcional)"),
        ("categoria", "Categoría (Enter = automática)"), ("imagen", "URL de la imagen (opcional)"),
-       ("afiliado", "¿Es un enlace de afiliado? (si/no)"), ("hasta", "Visible hasta (AAAA-MM-DD, Enter = 2 días)")]
+       ("afiliado", "¿Es un enlace de afiliado? (si/no)"), ("hasta", "Visible hasta (AAAA-MM-DD, Enter = 2 días)"),
+       ("minimo_antes_oferta", "Precio más bajo en esa tienda en los 30 días ANTES de empezar la oferta (kr, opcional; solo si lo has visto)")]
 
 
 def main():
@@ -23,7 +24,7 @@ def main():
         sys.exit(f"\nNo se guarda: {x}")
     print(f"\nRebaja real: −{e['real']} % (de {e['ref']} kr a {e['price']:g} kr). Mínimo de 30 días: {e['low']:g} kr.")
     if e["claimed"] is not None:
-        print(f"La tienda anuncia −{e['claimed']} % desde {e['old']:g} kr" + (" → DESCUENTO FALSO: ese precio anterior es más alto que el mínimo de 30 días." if e["fake"] else "."))
+        print(f"La tienda anuncia −{e['claimed']} % desde {e['old']:g} kr" + (" → DESCUENTO FALSO: ese precio anterior es más alto que el mínimo de los 30 días antes de la oferta." if e["fake"] else "."))
     print("Saldrá como chollo." if e["deal"] else "Saldrá solo en la tabla de descuentos falsos.")
     if input("\n¿Guardar? (s/n): ").strip().lower() != "s":
         return

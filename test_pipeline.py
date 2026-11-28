@@ -60,11 +60,13 @@ def test_editor_deals():
     import datetime as dt
     rows = [
         # real deal: 20 % below normal, at the 30-day low; store claims −50 % from an inflated price -> deal + fake
-        ["2026-12-01", "Robotstøvsuger X", "Elkjøp", "https://e.no/x", "800", "800", "1000", "1600", "", "", "si", ""],
+        ["2026-12-01", "Robotstøvsuger X", "Elkjøp", "https://e.no/x", "800", "800", "1000", "1600", "", "", "si", "", "1000"],
         # not cheaper than the 30-day low, honest claim -> rejected
         ["2026-12-01", "Kaffemaskin Y", "Power", "https://p.no/y", "900", "850", "1000", "", "", "", "", ""],
         # only a fake claim (price equals the low, nothing to save) -> fake only
-        ["2026-12-01", "Hodetelefon Z", "Komplett", "https://k.no/z", "500", "500", "", "800", "", "", "", ""],
+        ["2026-12-01", "Hodetelefon Z", "Komplett", "https://k.no/z", "500", "500", "", "800", "", "", "", "", "500"],
+        # claimed before-price but no pre-sale low known -> deal with a warning, never called fake
+        ["2026-12-01", "Nettbrett W", "Komplett", "https://k.no/w", "1890", "1890", "2570", "3790", "", "", "", ""],
         # expired
         ["2026-11-01", "Gammel", "Power", "https://p.no/g", "500", "800", "", "", "", "", "", ""],
         # bad link
@@ -75,11 +77,11 @@ def test_editor_deals():
         with open(f, "w", newline="", encoding="utf-8") as h:
             w = csv.writer(h); w.writerow(p.EDITOR_COLS); w.writerows(rows)
         deals, fakes, errors = p.editor(f, dt.date(2026, 12, 2))
-    assert [d["name"] for d in deals] == ["Robotstøvsuger X"], deals
+    assert [d["name"] for d in deals] == ["Robotstøvsuger X", "Nettbrett W"], deals
     d = deals[0]
     assert d["real"] == 20 and d["claimed"] == 50 and d["aff"] and d["editor"] and d["cat"] == "Rengjøring"
     assert sorted(x["name"] for x in fakes) == ["Hodetelefon Z", "Robotstøvsuger X"], fakes
-    assert len(errors) == 2 and "línea 3" in errors[0] and "línea 6" in errors[1], errors
+    assert len(errors) == 2 and "línea 3" in errors[0] and "línea 7" in errors[1], errors
 
 
 if __name__ == "__main__":

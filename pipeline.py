@@ -20,7 +20,7 @@ FIELDS = {
 }
 
 # Store category / product name (Norwegian) -> our category. First match wins.
-CATS = [(r"iphone|galaxy [saz]\d|mobiltelefon|nettbrett|lesebrett|pixel \d", "Mobil og nettbrett"),
+CATS = [(r"iphone|ipad|galaxy tab|galaxy [saz]\d|mobiltelefon|nettbrett|lesebrett|pixel \d", "Mobil og nettbrett"),
         (r"robotstøvsuger|støvsuger|mopp|dampvasker", "Rengjøring"),
         (r"smartklokke|sportsklokke|pulsklokke|aktivitetsmåler|løpesko|sykkel|ski\b", "Sport og trening"),
         (r"hodetelefon|høyttaler|lydplanke|ørepropp", "Lyd"), (r"^tv$|\btv\b|projektor", "TV"),
@@ -177,7 +177,7 @@ def score(db, day=None):
 
 
 EDITOR_COLS = ["fecha", "producto", "tienda", "enlace", "precio", "minimo_30d", "precio_normal", "precio_antes",
-               "categoria", "imagen", "afiliado", "hasta"]
+               "categoria", "imagen", "afiliado", "hasta", "minimo_antes_oferta"]
 
 
 def editor_entry(raw):
@@ -195,6 +195,7 @@ def editor_entry(raw):
     normal = num(g("precio_normal")) or low
     old = num(g("precio_antes"))
     old = old if old and old > price else None
+    presale = num(g("minimo_antes_oferta"))  # the legal førpris: lowest price in the 30 days before the sale started
     cats = {c for _, c in CATS} | {"Annet"}
     real = round((normal - price) / normal * 100)
     claimed = round((old - price) / old * 100) if old else None
@@ -202,7 +203,7 @@ def editor_entry(raw):
          "old": old, "real": real, "claimed": claimed, "cat": g("categoria") if g("categoria") in cats else categorize("", name),
          "img": g("imagen") if g("imagen").startswith("https://") else "", "aff": g("afiliado").lower() in {"si", "sí", "ja", "yes", "1"},
          "deal": price <= low and real >= MIN_REAL,
-         "fake": bool(old and claimed >= MIN_REAL and old > low * TOLERANCE)}
+         "presale": presale, "fake": bool(old and presale and claimed >= MIN_REAL and old > presale * TOLERANCE)}
     if not (e["deal"] or e["fake"]):
         raise ValueError(f"no es un chollo: {price:g} kr frente a un mínimo de 30 días de {low:g} kr y un precio normal de {normal:g} kr "
                          f"(rebaja real {real} %, hace falta {MIN_REAL} %), y el precio anterior que anuncia la tienda no es falso")
@@ -229,7 +230,7 @@ def editor(path, today):
                                 "t": temp(e["real"], e["ref"] - e["price"], 1)})
             if e["fake"]:
                 fakes.append({"name": e["name"], "img": e["img"], "cat": e["cat"], "store": e["store"], "price": e["price"], "old": e["old"],
-                              "claimed": e["claimed"], "low": e["low"], "real": round((e["low"] - e["price"]) / e["low"] * 100), "url": e["url"]})
+                              "claimed": e["claimed"], "low": e["presale"], "real": round((e["presale"] - e["price"]) / e["presale"] * 100), "url": e["url"]})
     return deals, fakes, errors
 
 
