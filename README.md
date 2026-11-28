@@ -21,6 +21,7 @@ Después ejecuta `python serve.py` y abre http://localhost:8772. Sirve las misma
 | `pipeline.py` | Carga los catálogos en `precios.db`, calcula los chollos y los descuentos falsos y genera la página |
 | `plantilla.html` | Diseño de la página; el pipeline mete los datos donde pone `/*DATA*/null` (un bloque JSON, sin código) |
 | `salida/app.js`, `salida/lucide.min.js` | Lógica de la página e iconos, servidos desde la propia web: la política CSP solo permite scripts propios. Si se añade GoatCounter, hay que añadir `https://gc.zgo.at` a `script-src` y `https://*.goatcounter.com` a `connect-src` e `img-src`, y actualizar el apartado «Statistikk» de `personvern.html` |
+| `salida/robots.txt`, `salida/sitemap.xml`, `salida/og.png`, `salida/favicon.svg` | SEO y vista previa al compartir. Si añades una página nueva, añádela al sitemap y copia las etiquetas `og:` del `<head>` |
 | `salida/fonts.css`, `salida/fonts/` | Fuentes servidas desde la propia web (sin Google Fonts, que enviaba la IP del visitante a Google) |
 | `test_pipeline.py` | Prueba un chollo real, un descuento falso y filas inválidas |
 | `demo/` | Productos y generador de catálogos inventados. Con catálogos reales no hace falta |

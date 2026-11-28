@@ -18,4 +18,9 @@ for f in data["fakes"]:
 data.update(stores=sorted(names.values()), demo=True)
 assert data["deals"] and not any(d["img"] or d["url"] != "#" for d in data["deals"] + data["fakes"])
 p.build(data, p.HERE / "salida" / "eksempel.html")
+out = p.HERE / "salida" / "eksempel.html"  # invented prices: keep out of search results, and it is not the front page
+html = out.read_text(encoding="utf-8").replace('<link rel="canonical" href="https://ektetilbud.no/">', '<meta name="robots" content="noindex">')
+html = html.replace('content="https://ektetilbud.no/"', 'content="https://ektetilbud.no/eksempel"')
+assert 'name="robots" content="noindex"' in html
+out.write_text(html, encoding="utf-8")
 print(f"eksempel.html: {len(data['deals'])} tilbud, {len(data['fakes'])} falske rabatter, butikker {data['stores']}")
