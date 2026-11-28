@@ -14,6 +14,17 @@ Después ejecuta `python serve.py` y abre http://localhost:8772. Sirve las misma
 
 `python demo/lag_eksempel.py` genera `salida/eksempel.html`. Es la página de ejemplo que se publica para las tiendas: datos inventados, marcada como «Eksempel», con tiendas anónimas y sin fotos ni enlaces. La portada la enlaza mientras no haya datos reales. Nunca toca `precios.db`.
 
+## Publicar chollos a mano
+
+Mientras no haya catálogos conectados, la portada se llena con chollos que eliges tú. Cada uno pasa por las mismas reglas que el motor automático: el precio tiene que estar al menos un 10 % por debajo del precio normal y no por encima del mínimo de esa tienda en los últimos 30 días. Si la tienda anuncia un precio anterior más alto que ese mínimo, sale también en «Rabatter som ikke er ekte».
+
+- **Desde el ordenador:** `python nuevo_chollo.py`. Te pregunta los datos, te enseña el veredicto, lo guarda en `chollos.csv` y, si quieres, lo publica.
+- **Desde el móvil:** edita `chollos.csv` en GitHub (botón del lápiz), añade una línea y pulsa «Commit changes». La web se actualiza sola en uno o dos minutos. Las líneas que no cumplen las reglas no salen; el motivo aparece en el registro de la ejecución en Actions.
+
+Columnas: `fecha` (AAAA-MM-DD), `producto`, `tienda`, `enlace` (https), `precio`, `minimo_30d` (precio más bajo en esa tienda los últimos 30 días; míralo en el historial de precios), `precio_normal` (opcional, el precio habitual; por defecto el mínimo de 30 días), `precio_antes` (opcional, el precio anterior que anuncia la tienda), `categoria` (opcional), `imagen` (opcional, https), `afiliado` (`si` si el enlace es de afiliado: sale con la etiqueta «Reklamelenke»), `hasta` (opcional; por defecto el chollo se ve 2 días).
+
+Apunta solo lo que hayas comprobado tú: eres responsable de lo que publicas como redacción.
+
 ## Archivos
 
 | Archivo | Qué hace |

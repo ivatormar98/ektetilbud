@@ -12,7 +12,8 @@ document.getElementById("demo").hidden = !D.demo;
 
 document.getElementById("sub").textContent =
   new Date(D.day).toLocaleDateString("nb-NO", {day: "numeric", month: "long", year: "numeric"}) + (D.products
-    ? ` · ${D.products} produkter i ${D.stores.length} butikker · ${D.deals.length} ekte tilbud · ${D.fakes.length} falske rabatter` : "");
+    ? ` · ${D.products} produkter i ${D.stores.length} butikker · ${D.deals.length} ekte tilbud · ${D.fakes.length} falske rabatter`
+    : D.deals.length ? ` · ${D.deals.length} ekte tilbud` : "");
 
 function media(img, category) {
   const m = el("div", "media");
@@ -39,14 +40,18 @@ function card(d) {
   m.append(el("span", "tag", `−${d.real} %`), el("span", "temp" + (d.t >= 160 ? " hot" : ""), `${d.t}°`));
   const b = el("div", "body"), pr = el("div", "prices");
   pr.append(el("span", "price", kr(d.price)), el("span", "was", kr(d.ref)));
-  b.append(el("span", "cat", d.cat), el("div", "name", d.name), pr,
-           el("div", "where", `Billigst hos ${d.store} · ${d.stores.length} ${d.stores.length === 1 ? "butikk" : "butikker"}`));
+  b.append(el("span", "cat", d.cat), el("div", "name", d.name), pr, el("div", "where", d.editor
+    ? `Hos ${d.store} · valgt av redaksjonen`
+    : `Billigst hos ${d.store} · ${d.stores.length} ${d.stores.length === 1 ? "butikk" : "butikker"}`));
   if (d.claimed != null && Math.abs(d.claimed - d.real) >= 5) b.append(el("div", "warn", `Butikken oppgir −${d.claimed} %`));
-  b.append(spark(d.hist), el("div", "stores", d.stores.map(([s, p]) => `${s} ${kr(p)}`).join(" · ")));
+  if (d.editor) b.append(el("div", "stores", `Laveste pris siste 30 dager: ${kr(d.low)}`));
+  else b.append(spark(d.hist), el("div", "stores", d.stores.map(([s, p]) => `${s} ${kr(p)}`).join(" · ")));
   if (D.demo) b.append(el("span", "go", "Eksempel – ingen lenke"));
   else {
-    const a = el("a", "go", `Se hos ${d.store}`); a.href = d.url; a.target = "_blank"; a.rel = "sponsored noopener";
+    const ad = !d.editor || d.aff;  // feed links are always affiliate links; hand-picked ones say so in chollos.csv
+    const a = el("a", "go", `Se hos ${d.store}`); a.href = d.url; a.target = "_blank"; a.rel = ad ? "sponsored noopener" : "noopener";
     a.append(icon("arrow-up-right")); b.append(a);
+    if (ad) b.append(el("div", "ad", "Reklamelenke"));
   }
   c.append(m, b); return c;
 }

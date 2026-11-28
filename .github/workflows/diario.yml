@@ -5,6 +5,8 @@ on:
   schedule:
     - cron: "0 5 * * *"   # 06:00 Oslo in winter, 07:00 in summer
   workflow_dispatch:       # "Run workflow" button for a manual run
+  push:                    # publish every change (e.g. a new line in chollos.csv); the bot's own precios.db push doesn't retrigger
+    branches: [main]
 
 permissions:
   contents: write   # to save precios.db back to the repo
@@ -39,6 +41,7 @@ jobs:
           git config user.email "github-actions@users.noreply.github.com"
           git add precios.db
           git diff --cached --quiet || git commit -m "Priser $(date -u +%F)"
+          git pull --rebase origin main   # someone may have pushed (e.g. chollos.csv) while this run was going
           git push
       - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v5

@@ -176,6 +176,63 @@ def score(db, day=None):
     return {"day": day, "deals": deals, "fakes": fakes, "products": len(today), "stores": stores, "no_history": no_history}
 
 
+EDITOR_COLS = ["fecha", "producto", "tienda", "enlace", "precio", "minimo_30d", "precio_normal", "precio_antes",
+               "categoria", "imagen", "afiliado", "hasta"]
+
+
+def editor_entry(raw):
+    """Judge one hand-picked deal from chollos.csv with the feed engine's rules. Raises ValueError with the reason if unusable."""
+    g = lambda k: (raw.get(k) or "").strip()
+    try:
+        day = dt.date.fromisoformat(g("fecha"))
+        until = dt.date.fromisoformat(g("hasta")) if g("hasta") else day + dt.timedelta(days=2)
+    except ValueError:
+        raise ValueError("fecha y hasta tienen que ser AAAA-MM-DD")
+    name, store, url = g("producto")[:300], g("tienda")[:60], g("enlace")
+    price, low = num(g("precio")), num(g("minimo_30d"))
+    if not (name and store and url.startswith("https://") and price and low):
+        raise ValueError("faltan producto, tienda, enlace https://, precio o minimo_30d")
+    normal = num(g("precio_normal")) or low
+    old = num(g("precio_antes"))
+    old = old if old and old > price else None
+    cats = {c for _, c in CATS} | {"Annet"}
+    real = round((normal - price) / normal * 100)
+    claimed = round((old - price) / old * 100) if old else None
+    e = {"day": day, "until": until, "name": name, "store": store, "url": url, "price": price, "low": low, "ref": round(normal),
+         "old": old, "real": real, "claimed": claimed, "cat": g("categoria") if g("categoria") in cats else categorize("", name),
+         "img": g("imagen") if g("imagen").startswith("https://") else "", "aff": g("afiliado").lower() in {"si", "sí", "ja", "yes", "1"},
+         "deal": price <= low and real >= MIN_REAL,
+         "fake": bool(old and claimed >= MIN_REAL and old > low * TOLERANCE)}
+    if not (e["deal"] or e["fake"]):
+        raise ValueError(f"no es un chollo: {price:g} kr frente a un mínimo de 30 días de {low:g} kr y un precio normal de {normal:g} kr "
+                         f"(rebaja real {real} %, hace falta {MIN_REAL} %), y el precio anterior que anuncia la tienda no es falso")
+    return e
+
+
+def editor(path, today):
+    """Hand-picked deals and fake discounts from chollos.csv that are live today, plus a list of rejected lines."""
+    deals, fakes, errors = [], [], []
+    if not Path(path).exists():
+        return deals, fakes, errors
+    with open(path, encoding="utf-8-sig", newline="") as f:
+        for n, raw in enumerate(csv.DictReader(f), start=2):
+            try:
+                e = editor_entry(raw)
+            except ValueError as x:
+                errors.append(f"línea {n}: {x}")
+                continue
+            if not e["day"] <= today <= e["until"]:
+                continue
+            if e["deal"]:
+                deals.append({k: e[k] for k in ("name", "cat", "img", "price", "store", "url", "real", "ref", "claimed", "low", "aff")}
+                             | {"brand": "", "editor": True, "stores": [[e["store"], e["price"]]], "hist": [],
+                                "t": temp(e["real"], e["ref"] - e["price"], 1)})
+            if e["fake"]:
+                fakes.append({"name": e["name"], "img": e["img"], "cat": e["cat"], "store": e["store"], "price": e["price"], "old": e["old"],
+                              "claimed": e["claimed"], "low": e["low"], "real": round((e["low"] - e["price"]) / e["low"] * 100), "url": e["url"]})
+    return deals, fakes, errors
+
+
 def build(data, out):
     blob = json.dumps(data, ensure_ascii=False).replace("<", "\\u003c")  # nothing in the data can close the <script> block
     out = Path(out)
@@ -189,10 +246,15 @@ def main():
     db = connect(HERE / "precios.db")
     added, skipped = ingest(db, feeds)
     data = score(db)
+    picked, picked_fakes, errors = editor(HERE / "chollos.csv", dt.date.today())
+    data["deals"] = sorted(picked + data["deals"], key=lambda x: -x["t"])
+    data["fakes"] = picked_fakes + data["fakes"]
+    for e in errors:
+        print(f"chollos.csv {e}")
     build(data, out)
     print(f"cargadas {added} filas nuevas ({skipped} descartadas por inválidas) | día {data['day']}: {data['products']} productos en "
           f"{len(data['stores'])} tiendas -> {len(data['deals'])} chollos reales, {len(data['fakes'])} descuentos falsos, "
-          f"{data['no_history']} sin historial suficiente | {out}")
+          f"{data['no_history']} sin historial suficiente | a mano: {len(picked)} chollos, {len(picked_fakes)} falsos | {out}")
 
 
 if __name__ == "__main__":
